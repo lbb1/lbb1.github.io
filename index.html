@@ -7,7 +7,7 @@
 
 </head>
 <body>
-    <div id="lbb"></div>
+    <div id="lbb">222</div>
 </body>
 <script type="text/javascript" src="https://shop.10086.cn/list/134_210_210_2_0_0_19_0_0.html"></script>
 <script>
@@ -21,6 +21,7 @@ $(document).ready(function(){
                 alert(data);
             },
             error: function (e) {
+                console.log(e);
                 alert("error");
             }
         });
