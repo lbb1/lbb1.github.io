@@ -9,10 +9,10 @@
 <body>
   
 </body>
-<script>
+    <script>
 $(document).ready(function(){
 	$.ajax({
-            type:"POST",
+            type:"get",
             url:"https://github.com/signup_check/username?csrf=LuScR8se9Y01HFArbVJMv40O0ryoSC+XZys1h5/mTUCqVIjsqSQt2YtD1PzeQK3pjldTkSkgLHggZ11DwQh0HA==&user[login]=333", //访问的链接
             dataType:"jsonp",  //数据格式设置为jsonp
             jsonp:"callback",  //Jquery生成验证参数的名称
