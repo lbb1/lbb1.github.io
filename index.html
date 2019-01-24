@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>Vue</title>
+<style type="text/css">
+    .active{color: blue}.fs-10{font-size:10px}.fs-12{font-size:12px}.fs-14{font-size:14px}.fs-15{font-size:15px}.fs-16{font-size:16px}.fs-17{font-size:17px}.fs-18{font-size:18px}.fs-20{font-size:20px}.fs-22{font-size:22px}.fs-24{font-size:24px}.fs-25{font-size:25px}.fs-26{font-size:26px}.fs-30{font-size:30px}.fs-32{font-size:32px}.fs-34{font-size:34px}.fs-36{font-size:36px}.fs-36{font-size:36px}.fs-38{font-size:38px}.fs-45{font-size:45px}.fs-46{font-size:46px}.fs-54{font-size:54px}
+    .error{font-weight: bold}
+    .red{color: red}
+</style>
 </head>
 <body>
 
@@ -15,22 +20,28 @@
 <div id="app">
 <br>
     <div v-bind:title="message">{{message}}</div>
+
 <br>
     <div v-if="see">See</div>
+
 <br>
     <ol>
         <li v-for="todo in todos">{{todo.text}}</li>
     </ol>
+
 <br>
     <div>{{reverse}}</div>
     <button v-on:click="toReverse">toReverse</button>
+
 <br>    
     <div>{{names}}</div>
     <input type="" v-model="names" name="">
+
 <br>
     <ol>
         <lbb-item></lbb-item>
     </ol>
+
 <br>
     <ol>
         <todo-item 
@@ -39,22 +50,28 @@
             v-bind:key="item.id"
         ></todo-item>
     </ol>
+
 <br>
     <div>{{setHtml}}</div>
     <div v-html="setHtml"></div>
+
 <br>
     <button v-bind:disabled="isDisabled">disabled</button>
+
 <br>
     <form v-on:submit.prevent="onSubmit">
         <input type="" name="test" value="22">
         <button type="submit">post</button>
     </form>
+
 <br>
     <a v-bind:href="url">v-bind:缩写</a>
     <a :href="url">:缩写</a>
+
 <br>
     <div v-on:click="Alert">v-on:缩写</div>
     <div @click="Alert">@click</div>
+
 <br>
     <div>{{message.split('').reverse().join('')}}</div>
     <div>{{reverseMessage2}}</div>
@@ -66,15 +83,55 @@
     <div>{{firstName}}</div>
     <div>{{lastName}}</div>
     <div>{{fullName}}</div>
+
 <br>
 	<input type="" v-model="question" name="" placeholder="输入问题">
 	<div>答案：{{answer}}</div>
+
+<br>
+    <div :class="{active:isActive}">v-bind:class="{active:isActive}"</div>
+
+<br>
+    <div class="fs-26" :class="{active:isActive,error:isError}">v-bind:class="{active:isActive}"</div>
+
+<br>
+    <div :class="classObject">v-bind:class="classObject"</div>
+
+<br>
+    <div :class="classObject2">计算属性</div>
+
+<br>
+    <div :class="[activeClass,errorClass]">数组语法</div>
+
+<br>
+    <div :class="[isActive?'active':'red']">三元表达式</div>
+
+<br>
+    <div :class="[isActive?activeClass:errorClass]">三元表达式2</div>
+
+<br>
+    <div :class="[{active:isActive},errorClass]">数据语法和对象语法相结合</div>
+
+<br>
+    <lbb-item :class="{active:isActive}">组件的基础上增加class</lbb-item>
+
+<br>
+    <div :style="{color:myColor,fontSize:mySize}">绑定内联样式1:v-bind:style="{color:myColor,font-size:mySize}"</div>
+
+<br>
+    <div :style="myFont">绑定内联样式2 v-bind:style="myFont"</div>
+
+<br>
+    <div :style="[myFont]">绑定内联样式3 v-bind:style="myFont"</div>
+
+
+
 </div>
 
 <script type="text/javascript">
 
     Vue.component('lbb-item',{
-        template: '<li>this is a component</li>'
+        template: '<li class="fs-26">this is a component</li>'
     });
 
     Vue.component('todo-item',{
@@ -108,7 +165,26 @@
             lastName: 'Bar',
 
             question: "",
-            answer: "I can't give you an answer until ask a question"
+            answer: "I can't give you an answer until ask a question",
+
+            isActive: true,
+            isError: false,
+            classObject:{
+                active: true,
+                'error': true
+            },
+
+            activeClass: 'active',
+            errorClass: 'error',
+
+            myColor: 'green',
+            mySize: '16px',
+
+            myFont: {
+                color: 'red',
+                fontSize: '22px',
+                opacity:.7,
+            }
         },
         beforeCreate: function(){//组件刚被创建 ,组件属性计算之前（data以及$el都未初始化）
             this.index++;
@@ -162,7 +238,7 @@
             },
             reverseMessage: function () {
 	            return this.message.split('').reverse().join('');
-		  }
+		    },
         },
 
         /**
@@ -208,17 +284,24 @@
             		this.firstName = _val[0];
             		this.lastName = _val[_val.length-1];
             	}
+            },
+
+            classObject2: function(){
+                return {
+                    active: this.isActive,
+                    error: this.isError
+                }
             }
         },
 
     });
 
-    Object.freeze(app.$data);
+    //Object.freeze(app.$data);
     //app.$destroy();
     var index = 0;
     while(index < 100){
         index++;
-        //document.getElementsByClassName("analog-rounded-button")[0].click();
+        //document.getElementsByClassName("reward-btn")[0].click();
         //document.querySelector("[gochange]").click();
         //document.getElementsByClassName("btn-exchange")[0].click();
     }
