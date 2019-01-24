@@ -188,50 +188,50 @@
         },
         beforeCreate: function(){//组件刚被创建 ,组件属性计算之前（data以及$el都未初始化）
             this.index++;
-            console.log('beforeCreate---------'+this.index,this.$el);
+            //console.log('beforeCreate---------'+this.index,this.$el);
         },
         created: function(){//组件实例创建完成，属性已经绑定dom未生成,(data已初始化,$el属性还不存在)
             this.index++;
-            console.log('created---------'+this.index,this.$el)
+            //console.log('created---------'+this.index,this.$el)
         },
         beforeMount: function(){//编译模板挂在之前
             this.index++;
-            console.log('beforeMount---------'+this.index,this.$el)
+            //console.log('beforeMount---------'+this.index,this.$el)
         },
         mounted: function(){//编译模板挂载之后
             this.index++;
-            console.log('mounted---------'+this.index,this.$el)
+            //console.log('mounted---------'+this.index,this.$el)
         },
         beforeUpdate: function(){//组件更新之前
             this.index++;
-            console.log('beforeUpdate---------'+this.index)
+            //console.log('beforeUpdate---------'+this.index)
         },
         updated: function(){//组件更新之后
             this.index++;
-            console.log('updated---------'+this.index,this.$el)
+            //console.log('updated---------'+this.index,this.$el)
         },
         activated: function(){//for keep-alive,组件被激活时调用
             this.index++;
-            console.log('activated---------'+this.index,this.$el)
+            //console.log('activated---------'+this.index,this.$el)
         },
         deactivated: function(){//for keep-alive,组件被移除时调用
             this.index++;
-            console.log('deactivated---------'+this.index,this.$el)
+            //console.log('deactivated---------'+this.index,this.$el)
         },
         beforeDestroy: function(){//组件销毁前调用
             this.index++;
-            console.log('beforeDestory---------'+this.index,this.$el)
+            //console.log('beforeDestory---------'+this.index,this.$el)
         },
         destroyed: function(){//组件销毁后调用
             this.index++;
-            console.log('destoryed---------'+this.index,this.$el)
+            //console.log('destoryed---------'+this.index,this.$el)
         },
         methods: {
             toReverse: function(){
                 this.reverse = this.reverse.split('').reverse().join('');
             },
             onSubmit: function(){
-                console.log("submit success!")
+                //console.log("submit success!")
             },
             Alert:function(){
                 alert(2)
