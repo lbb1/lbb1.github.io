@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<style type="text/css">
+     body{margin: 0;padding-left: 0}
+     #test{
+     	color: red
+     }
+</style>
+</head>
+<body>
+	<!--[if IE]>
+		<div>IE可以看到</div>
+	<![endif]-->
+
+	<!--[if IE 6]>
+		IE6可见
+	<![endif]-->
+
+	<!--[if IE 8]>
+		<div id="test">IE 8 可见</div>
+	<![endif]-->
+
+	<!--[if gte IE 6]>
+		<div id="test">IE 6以上可见</div>
+	<![endif]-->
+
+
+    <style type="text/css">
+    	.red{
+    		 background-color:orange;  /* all - for Firefox/Chrome */  
+    		 background-color: #ff3300\9;/*IE 6 7 8*/
+    		 _background-color: #ff9900;/*IE6*/
+    		 +background-color: #333333; /*IE 6 7*/
+    	}
+    </style>
+    <div class="red">cssHack</div>
+
+    <style type="text/css">
+	    .animation{
+	    	position: absolute;
+	    	z-index: 10;
+	    	width: 20px;
+	    	height: 20px;
+	    	background: red
+	    }
+        @keyframes mymove{
+        	from{
+        		left:0;
+        	}
+        	to{
+        		left: 100px
+        	}
+        }
+    	.animation{
+    		animation:mymove 3s infinite;
+    	}
+    </style>
+    <!-- <div class="animation"></div> -->
+
+   
+    <style type="text/css">
+        @keyframes myloop{
+        	0%{
+        		background: red
+        	}
+        	25%{
+        		background: #999
+        	}
+        	50%{
+        		background: yellow
+        	}
+        	100%{
+        		background: #000
+        	}
+        }
+    	.loop{
+    		animation: myloop 10s infinite;
+    		width: 40px;
+    		height: 40px;
+    		position: absolute;
+    	}
+    </style>
+    <!-- <div class="loop"></div>
+    <div style="width: 40px;height: 40px;margin-top: 30px;background: green">
+        <div style="width: 20px;height: 20px;margin-top: 30px;background: yellow"></div>
+    </div>
+    <div style="width: 300px;height: 300px;border: 1px solid red;position: relative;">
+    	<div style="position: absolute;left: 0;top: 0;right: 0;bottom: 0;margin: auto;width: 20px;height: 20px">AA</div>
+    </div> -->
+    <!-- <div style="width: 300px;height: 300px;border: 1px solid red;text-align: center;display: table-cell;vertical-align: middle;">
+    	<img  src="http://static.ickimg.com/assets/release3.001/img/icon/index-logo.png?v=2016051101" width="100" height="100">
+    </div> -->
+    <div>
+    	<div aaa=" "\33"\ ">333</div>
+    </div>
+
+    <video id="myVideo" controls="controls">
+    	<!-- <source src="https://video.icxbk.com/Micropython教学视频-480.mp4"  type=""> -->
+    </video>
+
+<script type="text/javascript">
+var video = document.querySelector('video');
+var assetURL = 'https://nickdesaulniers.github.io/netfix/demo/frag_bunny.mp4';
+// Need to be specific for Blink regarding codecs
+// ./mp4info frag_bunny.mp4 | grep Codec
+var mimeCodec = 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"';
+
+if ('MediaSource' in window && MediaSource.isTypeSupported(mimeCodec)) {
+    var mediaSource = new MediaSource();
+    //console.log(mediaSource.readyState); // closed
+    video.src = URL.createObjectURL(mediaSource);
+    mediaSource.addEventListener('sourceopen', sourceOpen);
+} else {
+    console.error('Unsupported MIME type or codec: ', mimeCodec);
+}
+
+function sourceOpen(_) {
+    //console.log(this.readyState); // open
+    var mediaSource = this;
+    var sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
+    fetchAB(assetURL, function(buf) {
+        sourceBuffer.addEventListener('updateend', function(_) {
+            mediaSource.endOfStream();
+            video.play();
+            //console.log(mediaSource.readyState); // ended
+        });
+        sourceBuffer.appendBuffer(buf);
+    });
+};
+
+function fetchAB(url, cb) {
+    console.log(url);
+    var xhr = new XMLHttpRequest;
+    xhr.open('get', url);
+    xhr.responseType = 'arraybuffer';
+    xhr.onload = function() {
+        cb(xhr.response);
+    };
+    xhr.send();
+};
+</script>
+
+  
+</html>
