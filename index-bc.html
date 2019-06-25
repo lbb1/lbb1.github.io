@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LBB's Blog</title>
+<style type="text/css">
+    .act{
+        color: red
+    }
+    .big{
+        font-size: 36px
+    }
+    .fw-b{
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+	<div id="App">
+        <input type="text" placeholder="edit" v-model="msg" name="">
+        <input type="text" placeholder="edit2" name="2" v-model.lazy="msg">
+        <input type="text" placeholder="edit3" name="3" v-model.number="msg">
+        <input type="text" placeholder="edit3" name="3" v-model.trim="msg">
+        <textarea v-model="msg" placeholder="edit"></textarea>
+        <input type="checkbox" id="checkbox" value="1" v-model="checkM" name="">
+        <input type="radio"  v-model="picked" value="AA" name="">
+        <select v-model="selected">
+            <option>A</option>
+        </select>
+        <select v-model="selected2" multiple>
+            <option>A</option>
+        </select>
+        <input type="checkbox" v-model="toggle" v-bind:value="222" name="22">
+        <input type="checkbox" v-model="toggle" true-value="yes" false-value="no" name="333">
+
+        <select v-model="selected">
+            <option v-bind:value="{num:1}">22</option>
+        </select>
+        <p>{{selected2}}</p>
+
+    </div>
+
+
+</body>
+<script type="text/javascript" src="assets/src/js/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+<script type="text/javascript">
+    function c(_c){
+        console.log(_c)
+    }
+    var data = {
+        show: true,
+        msg: '',
+        picked:'',
+        selected:'',
+        checkM: [],
+        selected2: [],
+        toggle:false
+    }
+    var vm = new Vue({
+        el: '#App',
+        data: data,
+        created: function(){
+        },
+        //计算属性 setter getter
+        computed: {
+        },
+        //方法
+        methods: {
+        },
+        //侦听属性
+        watch: {
+            
+        }
+    });
+
+</script>
+</html>
