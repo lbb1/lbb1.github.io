@@ -17,46 +17,30 @@
 </head>
 <body>
 	<div id="App">
-        <input type="text" placeholder="edit" v-model="msg" name="">
-        <input type="text" placeholder="edit2" name="2" v-model.lazy="msg">
-        <input type="text" placeholder="edit3" name="3" v-model.number="msg">
-        <input type="text" placeholder="edit3" name="3" v-model.trim="msg">
-        <textarea v-model="msg" placeholder="edit"></textarea>
-        <input type="checkbox" id="checkbox" value="1" v-model="checkM" name="">
-        <input type="radio"  v-model="picked" value="AA" name="">
-        <select v-model="selected">
-            <option>A</option>
-        </select>
-        <select v-model="selected2" multiple>
-            <option>A</option>
-        </select>
-        <input type="checkbox" v-model="toggle" v-bind:value="222" name="22">
-        <input type="checkbox" v-model="toggle" true-value="yes" false-value="no" name="333">
-
-        <select v-model="selected">
-            <option v-bind:value="{num:1}">22</option>
-        </select>
-        <p>{{selected2}}</p>
-
+        <blog-post v-for="item in posts" :post="item" :key='item.id'></blog-post>
     </div>
-
-
 </body>
 <script type="text/javascript" src="assets/src/js/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
 <script type="text/javascript">
-    function c(_c){
-        console.log(_c)
-    }
+    
+
+    Vue.component('blog-post',{
+        props:['post'],
+        template:'<div id="post.id">\
+                    <h2>{{post.title}}</h2>\
+                    <button>{{post.con}}</button>\
+                  </div>'
+    });
     var data = {
         show: true,
         msg: '',
-        picked:'',
-        selected:'',
-        checkM: [],
-        selected2: [],
-        toggle:false
-    }
+        posts: [
+          { id: 1, title: 'My journey',con:'AAA'},
+          { id: 2, title: 'Blogging',con:'BBB'},
+          { id: 3, title: 'Why Vue' ,con:'CCC'}
+        ]
+    };
     var vm = new Vue({
         el: '#App',
         data: data,

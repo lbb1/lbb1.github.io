@@ -618,12 +618,40 @@
     };
 
     // 将浮点数、整数等转化为以逗号形式的记数法
-    $.parseTernary = function(val) {
+    UTIL.prototype.parseTernary = function(val) {
         var str = val;
         if (typeof str != "number" || typeof str != "string") {
             str = str.toString();
         }
         return str.split('').reverse().join('').replace(/(\d{3})/g, '$1,').replace(/\,$/, '').split('').reverse().join('');
+    };
+
+    //浮点数计算问题
+     /*浮点数 乘法计算*/
+    UTIL.prototype.numMul = function(a,b){
+        var c = 0,
+            d = a.toString(),
+            e = b.toString();
+        try {
+            c += d.split(".")[1].length;
+        } catch (f) {}
+        try {
+            c += e.split(".")[1].length;
+        } catch (f) {}
+        return Number(d.replace(".", "")) * Number(e.replace(".", "")) / Math.pow(10, c);
+    };
+    /*浮点数 除法计算*/
+    UTIL.prototype.numDiv = function(a,b){
+        var self = this;
+        var c, d, e = 0,
+        f = 0;
+        try {
+            e = a.toString().split(".")[1].length;
+        } catch (g) {}
+        try {
+            f = b.toString().split(".")[1].length;
+        } catch (g) {}
+        return c = Number(a.toString().replace(".", "")), d = Number(b.toString().replace(".", "")), self.numMul(c / d, Math.pow(10, f - e));
     };
 
 
