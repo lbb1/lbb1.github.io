@@ -17,29 +17,31 @@
 </head>
 <body>
 	<div id="App">
-        <blog-post v-for="item in posts" :post="item" :key='item.id'></blog-post>
+        <custom-input v-bind:value="searchText" v-on:input="searchText = $event"></custom-input>
     </div>
+            
 </body>
 <script type="text/javascript" src="assets/src/js/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
 <script type="text/javascript">
     
 
-    Vue.component('blog-post',{
-        props:['post'],
-        template:'<div id="post.id">\
-                    <h2>{{post.title}}</h2>\
-                    <button>{{post.con}}</button>\
-                  </div>'
+    Vue.component('custom-input',{
+        props:['value'],
+        template:`<input
+                  v-bind:value="value"
+                  v-on:input="$emit('input', $event.target.value)"
+                >`
     });
     var data = {
         show: true,
-        msg: '',
+        searchText: '',
         posts: [
           { id: 1, title: 'My journey',con:'AAA'},
           { id: 2, title: 'Blogging',con:'BBB'},
           { id: 3, title: 'Why Vue' ,con:'CCC'}
-        ]
+        ],
+        pfontSize: 1
     };
     var vm = new Vue({
         el: '#App',
@@ -51,6 +53,9 @@
         },
         //方法
         methods: {
+            onEnlar: function(amount){
+                this.pfontSize += amount
+            }
         },
         //侦听属性
         watch: {
