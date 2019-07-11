@@ -21,7 +21,8 @@
     </div>
             
 </body>
-<script type="text/javascript" src="assets/src/js/vue.js"></script>
+<script type="text/javascript" src="assets/src/js/jquery.js"></script>
+<!-- <script type="text/javascript" src="assets/src/js/vue.js"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
 <script type="text/javascript">
     
@@ -63,5 +64,27 @@
         }
     });
 
+</script>
+
+<script type="text/javascript">
+    $.ajax({
+        url:'https://search.ickey.cn/site/ajax-get-res?keyword=2222&under_stock=1&v=1562772405089&_=1562772404525',
+        type:'get',
+        success:function(){
+        },
+        error:function(err){
+            console.log(err)
+        }
+    })
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4){
+            if(xhr.status == 200){
+                console.log(xhr.responseText)
+            }
+        }
+    }
+    xhr.open('GET','https://www.ickey.cn/smart-bom/get-vendor-list?_csrf=YjNyaktWekMRckM9Py9LHDt5Ox8OIEwZU3wrOC4%2FPDAGA0I%2FOQA2ew%3D%3D',true);
+    xhr.send('_t=33&_s3');
 </script>
 </html>
