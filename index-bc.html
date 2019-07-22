@@ -68,6 +68,53 @@
 <div class="lbb">1</div>
 <div class="lbb">2</div>
 <div class="lbb">3</div>
+
+
+
+
 <script type="text/javascript">
+    (function(){ 
+        var arr = {};
+        arr.toString = function(){
+            return 1
+        };
+        arr.valueOf = function(){
+            return 2
+        };
+        console.log(arr == 1);
+        console.log(arr == 2);
+        console.log(arr == "1");
+        console.log(arr == "2");
+
+
+
+
+
+        function Dog(){
+            this.names = 'dog';
+            this.say = function(){
+                alert(this.names)
+            }
+        };
+
+        function Cat(){
+            this.names = 'cat';
+            this.say = function(){
+                alert(this.names + '_fish')
+            }
+        };
+        var cat = new Cat();
+        Dog.call(cat);
+        cat.say();
+    })()
+    
+
+
+
+
+
+
+
+
 </script>
 </html>
