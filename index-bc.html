@@ -73,20 +73,25 @@
 
 
 <script type="text/javascript">
+
+
+
     (function(){ 
-        var arr = {};
-        arr.toString = function(){
-            return 1
-        };
-        arr.valueOf = function(){
-            return 2
-        };
-        console.log(arr == 1);
-        console.log(arr == 2);
-        console.log(arr == "1");
-        console.log(arr == "2");
+        return false
 
 
+
+        function foo(){
+            console.log(this.fruit)
+        };
+        var fruit = 'apple';
+        var pack = {
+            fruit :'orange'
+        };
+        foo();
+        foo.call(pack);
+        foo.apply(this)
+        return false
 
 
 
