@@ -35,97 +35,42 @@ a401997132   Ickey1234
     }
 </script>
 <script type="text/javascript">
-    /**
-    *  修饰符  
-    *  i : 不区分大小写
-    *  g : 全局匹配
-    *  m : 多行匹配
-    */
-    var str = "Visit Runoob!";
+    var myAjax = function(params){
+        var XML = new XMLHttpRequest();
+        XML.onreadystatechange = function(){
+            //console.log(XML.readyState);
+            var self = this;
+            if(XML.readyState == 4){
+                if(typeof params.success == 'function' && (self.status == 200 || self.status == 304)){
+                    params.success(JSON.parse(self.response));
+                };
+            };
+        };
+        params.type = params.type || 'GET';
+        params.url = params.url || '';
+        params.contentType = params.contentType || 'text/plain';
+        params.data = params.data || {};
+        XML.open(params.type,params.url,params.data)
+        //XML.setRequestHeader('Content-Type',params.contentType);
+        XML.send();
+    };
 
-    //查找方括号之间的任何字符。
-    var reg = /[ibc]/g;
-    //co(str.search(reg));
+    var param = {
+        _csrf: 'Tkx1cEJ2X3o3LTAjAR41OX0IOiY2QhwKdyZFAxYnKR4LHDkGKltqDQ==',
+        page: '0',
+        pageSize: 6,
+    };
+    myAjax({
+        url: 'https://www.ickey.cn/activities/get-activity',
+        type: 'GET',
+        data:param,
+        contentType: 'text/html',
+        success: function(data){
+            alert(JSON.stringify(data));
+            //console.log(data);
+        }
+    })
     
-    //查找任何从0至9的数字
-    str = "a4";
-    reg = /[0-9]/;
-    //co(str.search(reg));
-
-    //查找任何以 | 分隔的选项。
-    str = "fsa|bs";
-    reg = /a|b/;
-    //co(reg.test(str));
-
-    //元字符
-    // \d 查找数字
-    // \s 查找空白字符
-    // \b 匹配单词边界
-    // \uxxxx 查找十六进制xxxx规定的Unicode字符
-
-    //量词
-    // n+ 查找任何包含至少1个n的字符串
-    // n* 匹配任何包含零个或多个n的字符串
-    // n? 匹配任何包含零个或1个n的字符串 
-    
-    /**
-    *  ECMAScript 3规范中，正则表达式创建的RegExp对象共享一个实例
-    *  ECMAScript 5规范中，正则表达式创建的RegExp对象
-    * \o NUL字符
-    * \n 换行符
-    */
-
-    // function getRe(){
-    //     var re = /[a-z]/;
-    //     re.foo = 'bar';
-    //     return re
-    // };
-    // var reg = getRe();
-    // var reg2 = getRe();
-    // alert(reg === reg2);
-    // reg.foo = 'test';
-    // alert(reg2.foo);
-
-    /**
-    *  正则表达式特殊字符
-    * [...] 方括号内的任何字符
-    * [^...] 非方括号内的任何字符
-    * . 除换行符和其他Unicode行终止符之外的任意字符
-    * \w 任何ASCII字符组成的单词 等价[a-zA-Z0-9]
-    * \W 任何不是ASCII字符组成的单词 等价[^a-zA-Z0-9]
-    * \s 任何Unicode空字符
-    * \S 任何非Unicode空白字符的字符 \w和\S不同
-    * \d 任何ASCII码数字 等价于[0-9]
-    * \D 除了ascll数字之外的任何字符 等价于[^0-9]
-    * [\b] 退格直接量 （特例）
-    重复
-    * {n,m} 匹配前一项至少n次，单不能超过m次
-    * {n,}  匹配前一项至少n次
-    * {n}   匹配前一项n次
-    * ?     匹配前一项0次或1次 等价{0,1}
-    * +     匹配前一项1次或多次 等价{1,}
-    * *     匹配前一项0次或多次 等价{0,}
-    非贪婪重复(尽可能少的匹配)
-    在待匹配的字符后跟随一个?即可 ："??","+?","*?"
-    *
-    */
-    str = "abcd";
-    reg = /[abc]/g;
-    //co(reg.test(str));
-
-    reg = /[^abc]/g;
-    //co(reg.test(str));
-
-    str = '34';
-    reg = /\d/g;
-    co(reg.test(str)); 
- 
-    
-
-
-    // co(str.search(/r/i));
-    // co(str.search('R'));
-    // co(str.replace(/Vi/g,'LB'));
 
 </script>
 </html>
