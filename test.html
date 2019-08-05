@@ -7,6 +7,11 @@
 body{
     font-family: Tahoma,Verdana,Arial,"Microsoft Yahei",sans-serif;
 }
+input{
+    width: 100px;
+    height: 30px;
+    background: green
+}
 
 </style>
 </head>
@@ -24,6 +29,71 @@ http://www.cdce.cn/   统考注册
 a401997132   Ickey1234
 <<!-- script type="text/javascript" src="assets/src/js/require.js" data-main="assets/src/js/c.js" defer async="true" ></script> -->
 </body>
+<input type="file" name="file" data-uploadto = "http://www.hqchip.com/ajax/upbatchcartgoods">
+
+<script type="text/javascript">
+    //form
+    var formDataAjax = function(param){
+        if(typeof FormData == undefined)
+            return false;
+        var form = new FormData();
+        var data = param.data;
+        for(var name in data){
+            if(!data.hasOwnProperty(name))
+                continue;
+            if(typeof data[name] === 'function')
+                continue;
+            form.append(name,data[name])
+        };
+        var xml = new XMLHttpRequest();
+        xml.onreadystatechange = function(){
+            if(xml.readyState == 4){
+                alert(33)
+            }
+        };
+        xml.open('POST',param.url);
+        xml.send(form);
+    };
+    formDataAjax({
+        url: 'https://www.ickey.cn/activities/get-activity',
+        data:{
+            a:'aa',
+            b:'bb'
+        }
+    })
+    
+</script>
+
+<script type="text/javascript">
+    //文件上传
+    var initFile = function(){
+        var elems = document.getElementsByTagName('input');
+        if(!elems){
+            return false
+        };
+        for (var i in elems){
+            if(elems.hasOwnProperty(i)){
+                var input = elems[i];
+                if(input.type !== 'file'){
+                    continue
+                };
+                var url = input.getAttribute('data-uploadto');
+                if(!url){
+                    continue;
+                };
+                input.addEventListener('change',function(){
+                    var file = this.files[0];
+                    if(!file) return;
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST',url);
+                    xhr.send(file);
+                });
+            }
+        }
+    };
+    initFile();
+</script>
+
 <script type="text/javascript">
     function co(){
         var _arg = arguments;
@@ -35,24 +105,53 @@ a401997132   Ickey1234
     }
 </script>
 <script type="text/javascript">
+    var encodeFormData = function(data){
+        var params = [];
+        for(var name in data){
+            if(!data.hasOwnProperty(name)){
+                continue
+            };
+            if(typeof(data[name]) == 'function'){
+                continue
+            };
+            var value = data[name].toString();
+            name = encodeURIComponent(name.replace("%20","+"));
+            value = encodeURIComponent(value.replace("2%0","+"));
+            params.push(name + "=" + value);
+        };
+        return params.join('&')
+    };
+
     var myAjax = function(params){
         var XML = new XMLHttpRequest();
         XML.onreadystatechange = function(){
-            //console.log(XML.readyState);
             var self = this;
             if(XML.readyState == 4){
                 if(typeof params.success == 'function' && (self.status == 200 || self.status == 304)){
-                    params.success(JSON.parse(self.response));
+                    //获得响应的类型
+                    var _type = XML.getResponseHeader('Content-Type');
+                    if(_type.indexOf('xml') != -1 && XML.responseXML){
+                        params.success(XML.responseXML);
+                    }
+                    else if(_type == 'application/json'){
+                        params.success(JSON.parse(XML.responseText));
+                    }
+                    else{
+                         params.success(XML.responseText)
+                    };
+                    
                 };
             };
         };
-        params.type = params.type || 'GET';
-        params.url = params.url || '';
-        params.contentType = params.contentType || 'text/plain';
-        params.data = params.data || {};
-        XML.open(params.type,params.url,params.data)
+
+        if(params.type.toLowerCase() == 'get'){
+            params.url = params.url + "?"+encodeFormData(params.data)
+        };
+
+        XML.open(params.type,params.url,true);
+        console.log(encodeFormData(params.data));
         //XML.setRequestHeader('Content-Type',params.contentType);
-        XML.send();
+        XML.send(encodeFormData(params.data));
     };
 
     var param = {
@@ -62,14 +161,14 @@ a401997132   Ickey1234
     };
     myAjax({
         url: 'https://www.ickey.cn/activities/get-activity',
-        type: 'GET',
+        type: 'get',
         data:param,
-        contentType: 'text/html',
+        contentType: 'application/json',
         success: function(data){
-            alert(JSON.stringify(data));
-            //console.log(data);
+            //alert(JSON.stringify(data));
+            console.log(data);
         }
-    })
+    });
     
 
 </script>
