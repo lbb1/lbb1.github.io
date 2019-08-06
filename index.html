@@ -4,659 +4,184 @@
 <meta charset="utf-8">
 <title>LBB's Blog</title>
 <style type="text/css">
-body{
-    font-family: Tahoma,Verdana,Arial,"Microsoft Yahei",sans-serif;
-}
-.ll{
-	text-align: center;
-    padding-top: 100px;
-    font-size: 30px;
-    color: cadetblue;
-    display: none;
-}
+    body{
+        margin: 0;
+        padding: 0 0 100px 0;
+        font-family: Tahoma,Verdana,Arial,"Microsoft Yahei",sans-serif;
+        font-size: 14px;
+        background: #7c8e7917;
+        color: #17561ef7;
+    }
+    h1{font-size: 24px;}
+    h2{font-size: 20px;}
+    h3{font-size: 18px;margin: 0}
+    h4{font-size: 16px;}
+    h5{font-size: 14px;}
+    h6{font-size: 12px;}
+    code{
+        font-size: 13px;
+        font-family: 微软雅黑;
+        letter-spacing: .02rem;
+    }
+    pre{
+        margin: 0 0 20px 0;
+    }
+    .contain{
+        padding-top: 100px;
+        margin: auto;
+        width: 1000px;
+    }
+    .fb{
+        font-weight: bold;
+    }
 </style>
 </head>
 <body>
-	<pre><code>
-(function(win){
-	var UTIL = function(){
-	};
-	/**
-	*  基础配置
-	*/
-	UTIL.prototype.config = function(){
-	};
+    <div class="contain">
 
-    /**
-    *  初始化
-    */
-    UTIL.prototype.init = function(){
-        //禁止iframe 嵌套
-        if(window.top !== window.self){
-            window.top.location = window.location;
-        };
+    <h3>一、如何准确判断一个变量是数组类型</h3>
+    <pre><code>
+        var sss = [],
+        fn = function(){};
+        console.log(sss instanceof Array);
+        console.log(fn instanceof Function);
+    </code></pre>
 
-        // 图片懒加载 基于 jquery.scrollLoading.js
-        if($().scrollLoading){
-            $("img.lazy").scrollLoading();
-        };
-
-    };
-
-
-	/**
-	*  解析URL参数
-	*/
-	UTIL.prototype.getUrlParams = function(){
-		var query = window.location.search != ""? window.location.search.slice(1) : "",getObj = {};
-        (function(){
-            if(query == "") return ;
-            var params = query.split("&");
-            for(var p in params){
-                var _str = params[p];
-                if(_str != ""){
-                    _str = _str + "";
-                    var newArr = _str.split("=");
-                    if(newArr.length == 2){
-                        getObj[newArr[0]] = decodeURIComponent(newArr[1])
-                    }else{
-                        getObj[newArr[0]] = "";
-                    }
-                }
+    <h3>二、写一个原型链继承的例子</h3>
+    <pre><code>
+        function Animal(){
+            this.eat = function(){
+                console.log('animal eat');
             }
-        })();
-        return getObj;
-	};
+        };
+        function Dog(){
+            this.bark = function(){
+                console.log('dog bark')
+            }
+        };
+        Dog.prototype = new Animal();
+        var hashiqi = new Dog();
+    </code></pre>
 
-	/**
-	*  动态创建script标签
-	*/
-	UTIL.prototype.loadScript = function(_url,callback){
-		var _script = document.createElement('script');
-    	_script.type = 'text/javascript';
-    	if(_script.readyState){
-    		_script.onreadystatechange = function(){
-    			if(_script.readyState == 'loaded' || _script.readyState == 'complete'){
-    				_script.onreadystatechange = null;
-    				callback();
-    			}
-    		}
-    	}else{
-    		_script.onload = function(){
-    			callback();
-    		}
-    	};
-    	_script.src = _url;
-    	document.getElementsByTagName('head')[0].appendChild(_script);
-	};
+    <h3>三、封装 DOM 查询</h3>
+    <pre><code>
+        function elem(dom){
+            if(!dom) return false;
+            this.getElem = document.querySelectorAll(dom);
+            console.log(this.getElem);
+        };
 
-	/**
-	*  document兼容性
-	*/
-	UTIL.prototype.docEle = function(){
-		return document.documentElement || document.body;
-	};
-
-	/**
-	*  获取窗口的可视区域宽度
-	*/
-	UTIL.prototype.getClientWidth = function(){
-		return this.docEle().clientWidth
-	};
-
-	/**
-	*  获取窗口的可视区域高度
-	*/
-	UTIL.prototype.getClientHeight = function(){
-		return this.docEle().clientHeight
-	};
-
-	/**
-	*  获取元素到文档左边和顶部的距离
-	*/
-	UTIL.prototype.getOffset = function(obj){
-		var Left = 0;
-		var Top = 0;
-		while(obj){
-			Left += obj.offsetLeft;
-			Top += obj.offsetTop;
-			obj = obj.offsetParent;
-		}
-		return {left:Left,top:Top}
-	};
-
-	/**
-	*  获取元素到文档左边的距离
-	*/
-	UTIL.prototype.getOffsetLeft = function(obj){
-		return this.getOffset(obj).left;
-	};
-
-	/**
-	*  获取元素到文档顶部的距离
-	*/
-	UTIL.prototype.getOffsetTop = function(obj){
-		return this.getOffset(obj).top;
-	};
-
-	/**
-	*  获取滚动条左边滚动距离
-	*/
-	UTIL.prototype.getScrollLeft = function(){
-		return this.docEle().scrollLeft;
-	};
-
-	/**
-	*  获取滚动条顶部滚动距离
-	*/
-	UTIL.prototype.getScrollTop = function(){
-		return this.docEle().scrollTop;
-	};
-
-	/**
-	*  获取鼠标离文档左边距离
-	*/
-	UTIL.prototype.getMouseLeft = function(ev){
-		var ev = ev || window.event;
-		return this.getScrollLeft + ev.clientX;
-	};
-
-	/**
-	*  获取鼠标离文档顶部距离
-	*/
-	UTIL.prototype.getMouseTop = function(ev){
-		var ev = ev || window.event;
-		return this.getScrollTop + ev.clientY;
-	};
-
-	/**
-	*  阻止事件冒泡的空函数
-	*/
-    UTIL.prototype.stopParentHandler = function(ev) {
-        if(ev){
-            ev.cancelBubble = true;
-            ev.stopPropagation();
-        }
-    };
-
-    /**
-     * 名称：指定传入值是否为指定类型
-     * @param obj 待检测的数据
-     * @param type 目标类型
-     */
-    UTIL.prototype.isType = function (obj, type) {
-        return Object.prototype.toString.call(obj) == "[object " + type + "]";
-    };
-
-    /**
-     * 名称：获取指定值得类型名称
-     * @param obj 值
-     */
-    UTIL.prototype.getTypeName = function (obj) {
-        return Object.prototype.toString.call(obj).replace("[object ", "").replace("]", "");
-    };
-
-    /**
-     * 名称：检测传入对象是否为数组类型
-     * @param obj 待检测对象
-     */
-    UTIL.prototype.isArray = function (obj) {
-        return this.isType(obj, "Array");
-    };
-
-    /**
-     * 名称：检测传入对象是否为函数类型
-     * @param obj 待检测对象
-     */
-    UTIL.prototype.isFunction = function (obj) {
-        return this.isType(obj, "Function");
-    };
-
-    /**
-     * 名称：检测传入对象是否为Object类型
-     * @param obj 待检测对象
-     */
-    UTIL.prototype.isObject = function (obj) {
-        return this.isType(obj, "Object");
-    };
-
-    /**
-     * 名称：检测传入对象是否为Boolean类型
-     * @param obj 待检测对象
-     */
-    UTIL.prototype.isBoolean = function (obj) {
-        return this.isType(obj, "Boolean");
-    };
-
-    /**
-     * 名称：检测传入对象是否为Date类型
-     * @param obj 待检测对象
-     */
-    UTIL.prototype.isDate = function (obj) {
-        return this.isType(obj, "Date");
-    };
-
-    /**
-     * 名称：检测传入对象是否为String类型
-     * @param obj 待检测对象
-     */
-    UTIL.prototype.isString = function (obj) {
-        return this.isType(obj, "String");
-    };
-
-    /**
-     * 名称：检测传入对象是否为Nummber类型
-     * @param obj 待检测对象
-     */
-    UTIL.prototype.isNumber = function (obj) {
-        return this.isType(obj, "Number");
-    };
-
-    /**
-     * 名称：检测传入对象是否为空
-     * @param obj 待检测对象
-     */
-    UTIL.prototype.isEmpty = function (obj) {
-        var isEmpty = ( this.isArray(obj) && !obj.length ) || ( this.isObject(obj) && !Object.keys(obj).length ) || ( this.isString(obj) && obj == '' )
-        return isEmpty;
-    };
-
-    /**
-     * 名称：个位数转两位数
-     * @param str 字符串
-     */
-	UTIL.prototype.toDouble = function( str ){
-        if( str < 10 && str > 0 ) {
-            return '0' + str;
-        } else {
-            return '' + str;
-        }
-	};
-
-	/**
-     * 名称：去掉字符串左边空格
-     * @param str 字符串
-     */
-    UTIL.prototype.trimLeft = function( str ) {
-        if( str ) {
-            return str.replace(/^\s+/g, '');
-        }else{
-            return '';
-        }
-    };
-
-    /**
-     * 名称：去掉字符串右边空格
-     * @param str 字符串
-     */
-    UTIL.prototype.trimRight = function( str ) {
-        if( str ) {
-            return str.replace(/\s$/g, '');
-        }else{
-            return '';
-        }
-    };
-
-    /**
-     * 名称：去掉字符串左右两边的空格
-     * @param str 字符串
-     */
-    UTIL.prototype.trim = function( str ) {
-        if( str ) {
-            return this.trimRight(this.trimLeft( str ));
-        } else {
-            return '';
-        }
-    };
-
-    /**
-     * 名称：去掉指定字符串的所有空格
-     * @param str 字符串
-     */
-    UTIL.prototype.trimAll = function( str ) {
-        if( str ) {
-            return str.replace(/\s+/g, '');
-        } else {
-            return '';
-        }
-    };
-
-    /**
-     * 名称：设置localstorage
-     * @param val 待检测的数据
-     */
-    UTIL.prototype.setItem = function (key, val) {
-        return win.localStorage.setItem(key, val);
-    };
-
-    /**
-     * 名称：获取指定localstorage的value值
-     * @param val 待检测的数据
-     */
-    UTIL.prototype.getItem = function (val) {
-        return win.localStorage.getItem(val) || null;
-    };
-
-    /**
-     * 名称：删除指定localstorage的value值
-     * @param val 待检测的数据
-     */
-    UTIL.prototype.removeItem = function (val) {
-        return win.localStorage.removeItem(val);
-    };
-
-    /**
-     * 名称：保留两位小数且不四舍五入
-     * @param str 传入的字符串
-     */
-	UTIL.prototype.toFixed = function(str){
-		var arr = str.toString().split('.');
-        if( arr.length > 1 ){
-            if( arr[1].length == 1 ){
-                return arr[0] + '.' + arr[1] + '0';
-            }else if( arr[1].length == 2 ){
-                return arr[0] + '.' + arr[1];
+        elem.prototype.html = function(val){
+            var self = this;
+            if(val){
+                for(var i = 0;i &lt; self.getElem.length;i++){
+                    self.getElem[i].innerHTML = val;
+                }
             }else{
-                return arr[0] + '.' + arr[1].substring(0, 2);
-            }
-        }else{
-            return str + '.00';
-        }
-	};
-
-	/**
-     * 名称：始终返回一个数组,如果传入参数是数组则直接返回,否则将不为null的传入参数作为新数据的项进行返回
-     * @param arr 数组或者非数组变量
-     */
-    UTIL.prototype.sureArray = function(arr) {
-        if(typeTest.isArray(arr)){
-            return arr;
-        }else if(arr != null){
-            return [arr];
-        }else {
-            return [];
-        }
-    };
-
-	/**
-     * 名称：返回某一项在数组中存在的位置
-     * @param arr 数组对象
-     * @param row 要查找的数组项
-     */
-    UTIL.prototype.indexOf = function(arr, row) {
-        var index = -1;
-        var arr = this.sureArray(arr);
-        if(arr.indexOf){
-            index = arr.indexOf(row);
-        }else{
-            this.each(arr, function(item, i) {
-                if (item == row) {
-                    index = i;
-                    return false;
-                }
-            });
-        }
-        return index;
-    };
-
-    /**
-     * 名称：数组中是否包含某一项
-     * @param arr 数组对象
-     * @param row 要查找的数组项
-     */
-    UTIL.prototype.contains = function(arr, row) {
-        return this.indexOf( arr, row ) > -1;
-    };
-
-    /**
-     * 名称：删除数组中的某一项
-     * @param arr 数组对象
-     * @param row 要删除的数组项
-     */
-    UTIL.prototype.del = function(arr, row){
-        var arr = this.sureArray( arr );
-        var index = this.indexOf(arr, row);
-        if( index > -1 ){
-            arr.splice(index, 1);
-        }
-        return arr;
-    };
-
-    /**
-     * 名称:性能循环遍历方法
-     * @param arr 数组
-     * @param handler 处理函数
-     */
-    UTIL.prototype.each = function (arr, handler) {
-        var arr = this.sureArray(arr);
-        if(arr.length > 500){
-            return this.blockEach(arr, handler);
-        }else{
-            for(var i = 0, k = arr.length; i < k; i++) {
-                if(handler(arr[i], i) === false){
-                    break;
-                }
-            }
-        }
-    };
-
-    /**
-     * 名称:海量数据循环遍历方法
-     * @param arr 海量级数据 数组
-     * @param handler 处理函数
-     */
-    UTIL.prototype.blockEach = function(arr, handler){
-        if( !typeTest.isFunction(handler) ) return;
-        var arr = this.sureArray(arr);
-        var length = arr.length, it = Math.floor( length / 8), others = length % 8, i = 0;
-        //余数大于0时，继续运行
-        if( others > 0 ){
-            do{ handler( arr[i++], i ) } while(--others > 0);
-        }
-        var ifBreak = false;
-        var eachHandler = function (row, i) {
-            if (ifBreak) { return; }
-            ifBreak = handler(row, (i - 1)) === false;
-        }
-        while (iterations > 0) {
-            eachHandler(rows[i++], i);
-            eachHandler(rows[i++], i);
-            eachHandler(rows[i++], i);
-            eachHandler(rows[i++], i);
-            eachHandler(rows[i++], i);
-            eachHandler(rows[i++], i);
-            eachHandler(rows[i++], i);
-            eachHandler(rows[i++], i);
-            if (ifBreak) { break; }
-            iterations--;
-        }
-        handler = null;
-    };
-
-    /**
-     * 名称：手机号码检测
-     * @param val 待检测的数据
-     */
-    UTIL.prototype.regMobile = function (val,code) {
-        var mobile = /^1[3|4|5|6|7|8|9]\d{9}$/;
-        /*香港*/
-        if(code == "0852" || code== "852"){
-            mobile = /^\d{8}$/;
-        };
-        /*台湾*/
-        if(code == "0886" || code== "886"){
-            mobile = /^\d{10}$/
-        };
-        /*澳门*/
-        if(code == "0853" || code== "853"){
-            mobile = /^\d{8}$/
-        };
-        return mobile.test(val);
-    };
-
-    /**
-     * 名称：邮箱检测
-     * @param val 待检测的数据
-     */
-    UTIL.prototype.regMail = function (val) {
-        var mail = /^[a-zA-Z0-9._%-]+@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,4}$/;
-        return mail.test(val);
-    };
-
-    /**
-     * 名称：汉字检测
-     * @param val 待检测的数据
-     */
-    UTIL.prototype.regChinese = function (val) {
-        var chinese = /^[\u4E00-\u9FFF]+$/;
-        return chinese.test(val);
-    };
-
-    /**
-     * 名称：身份证检测
-     * @param val 待检测的数据
-     */
-    UTIL.prototype.regIdCard = function (val) {
-        var isIDCard1 = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$/; // 15位
-        var isIDCard2 = /^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/; // 18位
-        return isIDCard1.test(val) || isIDCard2.test(val);
-    };
-
-    /**
-     * 名称：银行卡号检测
-     * @param val 待检测的数据
-     */
-    UTIL.prototype.regBankCard = function (val) {
-        var isbankCard =  /^(\d{16}|\d{19})$/;
-        return isbankCard.test(val);
-    };
-
-    /**
-     * 名称：是否纯数字
-     * @param val 待检测的数据
-     */
-    UTIL.prototype.regNumber = function (val) {
-        var reg = new RegExp("^[0-9]*$");
-        if(reg.test(val)){
-            return true;
-        };
-        return false;
-    };
-
-    /**
-     * 名称：get方法
-     */
-    UTIL.prototype.getData = function(){
-        var args = Array.prototype.slice.apply(arguments);
-        args.unshift('GET');
-        return this.ajax.apply(this, args);
-    };
-
-    /**
-     * 名称：post方法
-     */
-    UTIL.prototype.postData = function(){
-        var args = Array.prototype.slice.apply(arguments);
-        args.unshift('POST');
-        return this.ajax.apply(this, args);
-    };
-    UTIL.prototype.ajax = function(type, url, data, successCallback, errorCallback){
-        var _this = this, arg = arguments;
-            type = type || 'GET',
-            data = data || {},
-            successCallback = successCallback || function(){},
-            errorCallback = errorCallback || function(){};
-        var ajaxData = {
-            url: url,
-            cache: false,
-            type: type,
-            data: data,
-            dataType: 'json',
-            timeout: 20000,
-            beforeSend: function(){
-            },
-            complete: function(){
-            },
-            success: function(json){
-                successCallback.call(_this, json);
-            },
-            error: function(xhr, type, errorThrown){
-                errorCallback.call(xhr)
-                if( type == 'timeout' ){
-                }
+                return self.getElem[0].innerHTML
             }
         };
-        return $.ajax(ajaxData);
-    };
 
-    /*
-     *  将表单系列化后的键值对内容转为json
-     *  a=1&b=2&c=3&d=4&e=5
-     *  转化后=>
-     *  [
-     *    {name: 'firstname', value: 'Hello'},
-     *    {name: 'lastname', value: 'World'},
-     *    {name: 'alias'}, // 值为空
-     *  ]
-     */
-    UTIL.prototype.serializeObject = function(id) {
-        var o = {};
-        this = $('#'+id);
-        var a = this.serializeArray();
-        $.each(a, function() {
-            if (o[this.name] !== undefined) {
-                if (!o[this.name].push) {
-                    o[this.name] = [o[this.name]];
-                }
-                o[this.name].push(this.value || '');
-            } else {
-                o[this.name] = this.value || '';
-            }
-        });
-        return o;
-    };
+        elem.prototype.on = function(type,fn){
+            var self = this;
+            for(var i = 0;i &lt; self.getElem.length;i++){
+                self.getElem[i].addEventListener(type,fn)
+            };
+            return this
+        };
 
-    /**
-    *  字符串截取 替换为...
-    */
-    UTIL.prototype.limit = function(str, len) {
-        //截取字符串，多余的部分用...代替
-        var strlen = 0;
-        var s = "";
-        for (var i = 0; i < str.length; i++) {
-            if (str.charCodeAt(i) > 128) {
-                strlen += 2;
-            } else {
-                strlen++;
-            }
-            s += str.charAt(i);
-            if (strlen >= len) {
-                return s + "...";
-            }
-        }
-        return s;
-    };
+        var elems = new elem('[href="lbb"]');
+        elems.html('haha');
+        elems.on('click',function(){
+        })
+    </code></pre>
 
-    // 将浮点数、整数等转化为以逗号形式的记数法
-    $.parseTernary = function(val) {
-        var str = val;
-        if (typeof str != "number" || typeof str != "string") {
-            str = str.toString();
-        }
-        return str.split('').reverse().join('').replace(/(\d{3})/g, '$1,').replace(/\,$/, '').split('').reverse().join('');
-    };
+    <h3>四、描述 new 一个对象的过程</h3>
+    <pre><code>
+        1)构造函数
+            function Foo(name,age){
+                this.name = name;
+                this.age = age;
+                this.class = 'class';
+                //return this //默认有
+            };
+            var f = new Foo('lbb',18);
 
+            1.创建一个新对象
+            2.this 指向这个新对象
+            3.执行代码，即对 this 赋值
+            4.返回 this
+            new 的过程：
+            1.var f = new Foo('zhangsan',20)  将参数传进去，函数中的 this 会变成空对象
+            2.this.name = name;this.age = age;this.class = 'class-1' 为赋值；return this 为实际的运行机制
+            3.return 之后赋值给 f ，f 具备了 f.name = zhangsan、f.age = 20、f.class = 'class-1'
+            4.继续执行到 f1 ,则 f1.name = lisi、f1.age = 22、f1.class = 'class-1'
+        
+        2)构造函数（扩展）
+            1.var a = {} 其实是 var a = new Object()的语法糖  （a 的构造函数是 Object 函数）
+            2.var a = [] 其实是 var a = new Array()的语法糖    （a 的构造函数是 Array 函数）
+            3.function Foo(){...}其实是 var Foo = new Function(...)     （Foo 的构造函数是 Function 函数）
+            4.使用 instanceof 判断一个函数是否是一个变量的构造函数   (判断一个变量是否为“数组”  变量 instanceof Array)
+        
+        3)原型规则
 
+            1.所有的引用类型（数组、对象、函数）都具有对象特性，即可自由扩展属性（除了“null”）
+                var obj = {}; obj.a = 100;
+                var arr = []; arr.a = 100;
+                function fn(){}; fn.a = 100;
 
-	win.UTIL = new UTIL();
-})(window)
-</code></pre>
-<!-- <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script> -->
-<div class="ll"> 首页就是这个样子 镏镏</div>
-<script type="text/javascript" color="0,0,255" opacity='0.7' zIndex="-2" count="99" src="assets/src/js/test.js"></script>
-<script type="text/javascript" src="assets/src/js/jquery.js"></script>
+            2.所有的引用类型（数组、对象、函数）都有一个 __proto__ 属性(隐式原型属性），属性值是一个普通的对象
+                obj.__ptoto    arr.__proto__     fn.__proto__
+
+            3.
+
+        
+    </code></pre>
+
+    </div>
 </body>
-<script type="text/javascript">
-	$('.ll').slideDown(500);
-</script>
+<!-- <script type="text/javascript" color="0,0,255" opacity='0.7' zIndex="-2" count="99" src="assets/src/js/test.js"></script> -->
+<script type="text/javascript" src="assets/src/js/jquery.js"></script>
 </html>
+
+
+
+
+<script type="text/javascript">
+$(function(){
+    https://www.cnblogs.com/jianghao233/p/8983176.html
+    //部分关键字
+    var keys = {
+        'new':'',
+        'function': '',
+        'var': '',
+        'if': '',
+        'else': '',
+        'break': '#a626a4',
+        ' in ': '',
+        'if': '',
+        'return':'#a626a4'
+    };
+    $.each($('code'),function(index,value){
+        var _self = $(this),
+            _html = _self.html();
+        for(var _key in keys){
+            if(!keys.hasOwnProperty(_key))
+                continue;
+            var _color = keys[_key] || '#2366ccc2';
+            _html = _html.replace(new RegExp(_key,"gim"),'<span class="fb" style="color:'+_color+'">'+_key+'</span>');
+        };
+        _self.html(_html);
+    });
+    /**
+    *code需要处理关键词
+    * <: &lt;
+    * >: &gt;
+    * &: &amp;
+    */
+})
+
+    
+
+    
+</script>
