@@ -22,6 +22,7 @@
         font-size: 13px;
         font-family: 微软雅黑;
         letter-spacing: .02rem;
+        line-height: 20px;
     }
     pre{
         margin: 0 0 20px 0;
@@ -99,47 +100,170 @@
     <h3>四、描述 new 一个对象的过程</h3>
     <pre><code>
         1)构造函数
-            function Foo(name,age){
-                this.name = name;
-                this.age = age;
-                this.class = 'class';
-                //return this //默认有
-            };
-            var f = new Foo('lbb',18);
+                function Foo(name,age){
+                    this.name = name;
+                    this.age = age;
+                    this.class = 'class';
+                    //return this //默认有
+                };
+                var f = new Foo('lbb',18);
 
-            1.创建一个新对象
-            2.this 指向这个新对象
-            3.执行代码，即对 this 赋值
-            4.返回 this
-            new 的过程：
-            1.var f = new Foo('zhangsan',20)  将参数传进去，函数中的 this 会变成空对象
-            2.this.name = name;this.age = age;this.class = 'class-1' 为赋值；return this 为实际的运行机制
-            3.return 之后赋值给 f ，f 具备了 f.name = zhangsan、f.age = 20、f.class = 'class-1'
-            4.继续执行到 f1 ,则 f1.name = lisi、f1.age = 22、f1.class = 'class-1'
+                1.创建一个新对象
+                2.this 指向这个新对象
+                3.执行代码，即对 this 赋值
+                4.返回 this
+                new 的过程：
+                1.var f = new Foo('zhangsan',20)  将参数传进去，函数中的 this 会变成空对象
+                2.this.name = name;this.age = age;this.class = 'class-1' 为赋值；return this 为实际的运行机制
+                3.return 之后赋值给 f ，f 具备了 f.name = zhangsan、f.age = 20、f.class = 'class-1'
+                4.继续执行到 f1 ,则 f1.name = lisi、f1.age = 22、f1.class = 'class-1'
         
         2)构造函数（扩展）
-            1.var a = {} 其实是 var a = new Object()的语法糖  （a 的构造函数是 Object 函数）
-            2.var a = [] 其实是 var a = new Array()的语法糖    （a 的构造函数是 Array 函数）
-            3.function Foo(){...}其实是 var Foo = new Function(...)     （Foo 的构造函数是 Function 函数）
-            4.使用 instanceof 判断一个函数是否是一个变量的构造函数   (判断一个变量是否为“数组”  变量 instanceof Array)
+                1.var a = {} 其实是 var a = new Object()的语法糖  （a 的构造函数是 Object 函数）
+                2.var a = [] 其实是 var a = new Array()的语法糖    （a 的构造函数是 Array 函数）
+                3.function Foo(){...}其实是 var Foo = new Function(...)     （Foo 的构造函数是 Function 函数）
+                4.使用 instanceof 判断一个函数是否是一个变量的构造函数   (判断一个变量是否为“数组”  变量 instanceof Array)
         
         3)原型规则
 
             1.所有的引用类型（数组、对象、函数）都具有对象特性，即可自由扩展属性（除了“null”）
-                var obj = {}; obj.a = 100;
-                var arr = []; arr.a = 100;
-                function fn(){}; fn.a = 100;
+                    var obj = {}; obj.a = 100;
+                    var arr = []; arr.a = 100;
+                    function fn(){}; fn.a = 100;
 
             2.所有的引用类型（数组、对象、函数）都有一个 __proto__ 属性(隐式原型属性），属性值是一个普通的对象
-                obj.__ptoto    arr.__proto__     fn.__proto__
+                    obj.__ptoto    arr.__proto__     fn.__proto__
 
-            3.
+            3.所有的函数，都有一个 prototype(显式原型）属性，属性值也是一个普通的对象
+                    fn.prototype
 
-        
+            4.所有的引用类型（数组、对象、函数）， _proto_ 属性值(隐式原型属性）指向它的构造函数的“prototype”属性值
+                    obj.__proto__ === Object.prototype
+                    当试图得到一个对象的某个属性时，如果这个对象本身没有这个属性，那么会去它的_proto_(即它的构造函数的 prototype（显式原型）)中寻找
+
+            5.构造函数
+                    function Foo(name,age){
+                        this.name = name;
+                    };
+                    Foo.prototype.alertName = function(){
+                        alert(this.name)
+                    };
+
+            6.创建实例
+                    var f = new Foo('lbb');
+                    f.printName = function(){
+                        alert(this.name)
+                    };
+                    f.printName();
+                    f.alertName();
+                    f.toString();
+
+            7.instanceof 判断 引用类型 属于哪个 构造函数 的方法
+                    console.log(f instanceof Foo);
+                    console.log(f instanceof Object);
     </code></pre>
+
+    <h3>五、this</h3>
+    <pre><code>
+        a. this表示当前对象，如果在全局作用范围内使用this，则指代当前页面对象window；
+        b. 如果在函数中使用this，则this指代什么是根据运行时此函数在什么对象上被调用。 我们还可以使用apply和call两个全局方法来改变函数中this的具体指向。
+
+        function foo(){
+            console.log(this.a)
+        };
+
+        1) 隐式绑定
+                    var a = 2;
+                    var obj = {
+                        a: 3,
+                        foo:foo
+                    };
+                    obj.foo();
+
+        2) 多层调用链（原则是获取最后一层调用的上下文对象）
+                    var a = 2;
+                    var obj1 = { 
+                        a: 4,
+                        foo: foo 
+                    };
+                    var obj2 = { 
+                        a: 3,
+                        obj1: obj1
+                    };
+                    obj2.obj1.foo();
+
+        3) 隐式丢失（函数别名）
+                    var a = 2;
+                    var obj = { 
+                        a: 3,
+                        foo: foo 
+                    };
+                    var bar = obj.foo;
+                    bar(); //?
+
+        4) 隐式丢失（回调函数）
+            -虽然参传是obj.foo，因为是引用关系，所以传参实际上传的就是foo对象本身的引用。对于setTimeout的调用，
+            还是 setTimeout -> 获取参数中foo的引用参数 -> 执行 foo 函数，中间没有obj的参与。这里依旧进行的是默认绑定。
+                var a = 2;
+                var obj = { 
+                    a: 3,
+                    foo: foo 
+                };
+                setTimeout(obj.foo, 100 ); // ？
+                setTimeout(function(){
+                    obj.foo()
+                }, 100 ); // ？
+
+        5) 硬绑定
+            虽然bar被显示绑定到obj2上，对于bar，function(){…} 中的this确实被绑定到了obj2，
+            而foo因为通过foo.call( obj1 )已经显示绑定了obj1，所以在foo函数内，this指向的是obj1，不会因为bar函数内指向obj2而改变自身。
+                var a = 2;
+                var obj1 = { 
+                    a: 3,
+                };
+                var obj2 = { 
+                    a: 4,
+                };
+                var bar = function(){
+                    foo.call( obj1 );
+                }
+                setTimeout( bar, 100 ); // 
+                bar.call( obj2 ); // 
+            
+        6) null和undefined的绑定
+            在显示绑定中，对于null和undefined的绑定将不会生效。
+                var a = 2;
+                function foo() { 
+                    console.log( this.a );
+                }
+                foo.call( null );
+                foo.call( undefined );
+            这种情况主要是用在不关心this的具体绑定对象（用来忽略this），而传入null实际上会进行默认绑定，导致函数中可能会使用到全局变量，与预期不符。
+            所以对于要忽略this的情况，可以传入一个空对象ø，该对象通过Object.create(null)创建。这里不用{}的原因是，ø是真正意义上的空对象，它不创建Object.prototype委托，{}和普通对象一样，有原型链委托关系。
+
+    </code></pre>
+
 
     </div>
 </body>
+<script type="text/javascript">
+       function foo(){
+            console.log(this.a)
+        };
+
+     var a = 2;
+                var obj1 = { 
+                    a: 3,
+                };
+                var obj2 = { 
+                    a: 4,
+                };
+                var bar = function(){
+                    foo.call( obj1 );
+                }
+                setTimeout( bar, 100 ); // 
+                bar.call( obj2 ); // 
+</script>
 <!-- <script type="text/javascript" color="0,0,255" opacity='0.7' zIndex="-2" count="99" src="assets/src/js/test.js"></script> -->
 <script type="text/javascript" src="assets/src/js/jquery.js"></script>
 </html>
@@ -149,7 +273,7 @@
 
 <script type="text/javascript">
 $(function(){
-    https://www.cnblogs.com/jianghao233/p/8983176.html
+    
     //部分关键字
     var keys = {
         'new':'',
@@ -179,7 +303,27 @@ $(function(){
     * >: &gt;
     * &: &amp;
     */
-})
+});
+
+Array.prototype.lbb = function(){
+    this.reverse();
+    return this;
+};
+String.prototype.lbb = function(){
+    return this + 'a'
+};
+Number.prototype.lbb = function(){
+    console.log(this);
+    var s = this;
+    s++;
+    return s
+}
+var arr = [1,2,3];
+var str = 'lbb';
+var num = 11;
+// console.log(arr.lbb());
+// console.log(str.lbb());
+// console.log(num.lbb());
 
     
 
