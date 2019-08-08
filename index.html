@@ -4,7 +4,12 @@
 <meta charset="utf-8">
 <title>LBB's Blog</title>
 <style type="text/css">
+    html{
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
     body{
+        width: 100vw;
         margin: 0;
         padding: 0 0 100px 0;
         font-family: Tahoma,Verdana,Arial,"Microsoft Yahei",sans-serif;
@@ -14,7 +19,11 @@
     }
     h1{font-size: 24px;}
     h2{font-size: 20px;}
-    h3{font-size: 18px;margin: 0}
+    h3{
+        font-size: 18px;
+        margin: 20px 0 0 0;
+        cursor: pointer;
+    }
     h4{font-size: 16px;}
     h5{font-size: 14px;}
     h6{font-size: 12px;}
@@ -25,7 +34,8 @@
         line-height: 20px;
     }
     pre{
-        margin: 0 0 20px 0;
+        margin: 0;
+        display: none;
     }
     .contain{
         padding-top: 100px;
@@ -240,6 +250,92 @@
                 foo.call( undefined );
             这种情况主要是用在不关心this的具体绑定对象（用来忽略this），而传入null实际上会进行默认绑定，导致函数中可能会使用到全局变量，与预期不符。
             所以对于要忽略this的情况，可以传入一个空对象ø，该对象通过Object.create(null)创建。这里不用{}的原因是，ø是真正意义上的空对象，它不创建Object.prototype委托，{}和普通对象一样，有原型链委托关系。
+    </code></pre>
+
+    <h3>六、js继承</h3>
+    <pre><code>
+        1) 原型链继承
+                 function Person(){
+                    this.name = 'mike';
+                 };
+                 function Child(){
+                    this.child = 'child';
+                 };
+                 Child.prototype = new Person();
+                 var _child = new Child();
+                 console.log(_child.child);
+                 console.log(_child.name);
+
+                 function Brother(){
+                    this.weight = 60;
+                 };
+                 Brother.prototype = new Child();
+                 var _brother = new Brother();
+                 console.log(_brother.name);
+                 console.log(_brother.child);
+                 console.log(_brother.weight);
+
+        2) 类式继承（借用构造函数）
+                类式继承一般是通过运用call或者apply 进行子类型构造函数的内部调用超类型的构造函数。
+                function Person(age){
+                   this.name = ['mike','lbb'];
+                   this.age = age;
+                };
+                function Child(age){
+                   Person.call(this,age)
+                };
+                var _child = new Child('mpp');
+                console.log(_child.name);
+                console.log(_child.age);
+
+        3) 组合继承
+                function Person(age){
+                   this.name = 'lbb';
+                   this.age = age;
+                };
+                Person.prototype.run = function(){
+                   return this.name + "_" + this.age
+                };
+                
+                function Child(age){
+                   Person.call(this,age)
+                };
+                Child.prototype = new Person();
+                var _child = new Child('18');
+                console.log(_child.name);
+                console.log(_child.run());
+
+        4) 原型式继承
+                var myNew = {
+                    name: 'lbb',
+                    getName: function(){
+                        return this.name
+                    },
+                    says: function(){
+                        return this.saying || ''
+                    }
+                };
+
+                var cat = Object.create(myNew);
+                cat.name = 'mpp';
+                cat.saying = 'hello';
+                cat.getName = function(){
+                    console.log( this.says + "_" + this.name + "_" + this.says );
+                };
+                cat.getName();
+                //低版本没有浏览器 Object.create 替代方法
+                function obj(o){
+                    function f(){};
+                    f.prototype = o;
+                    return new f();
+                };
+
+                var box = {
+                    name: 'lbb',
+                    arr : ['18','boy']
+                };
+                var b1 = obj(box);
+                console.log(b1.name);
 
     </code></pre>
 
@@ -247,22 +343,21 @@
     </div>
 </body>
 <script type="text/javascript">
-       function foo(){
-            console.log(this.a)
+    function Another(ori){
+        var clone = new Object(ori);
+        clone.say = function(){
+            alert('hi')
         };
+        return clone
+    };
+    var person = {
+        name: 'lbb',
+        frd: ['mpp','haha']
+    };
+    var obj = Another(person);
+    obj.say(); 
 
-     var a = 2;
-                var obj1 = { 
-                    a: 3,
-                };
-                var obj2 = { 
-                    a: 4,
-                };
-                var bar = function(){
-                    foo.call( obj1 );
-                }
-                setTimeout( bar, 100 ); // 
-                bar.call( obj2 ); // 
+
 </script>
 <!-- <script type="text/javascript" color="0,0,255" opacity='0.7' zIndex="-2" count="99" src="assets/src/js/test.js"></script> -->
 <script type="text/javascript" src="assets/src/js/jquery.js"></script>
@@ -273,58 +368,95 @@
 
 <script type="text/javascript">
 $(function(){
-    
-    //部分关键字
-    var keys = {
-        'new':'',
-        'function': '',
-        'var': '',
-        'if': '',
-        'else': '',
-        'break': '#a626a4',
-        ' in ': '',
-        'if': '',
-        'return':'#a626a4'
-    };
-    $.each($('code'),function(index,value){
-        var _self = $(this),
-            _html = _self.html();
-        for(var _key in keys){
-            if(!keys.hasOwnProperty(_key))
-                continue;
-            var _color = keys[_key] || '#2366ccc2';
-            _html = _html.replace(new RegExp(_key,"gim"),'<span class="fb" style="color:'+_color+'">'+_key+'</span>');
+
+    var indexPage = function(){
+        this.$body = $('body');
+
+        this.keys = {
+            'new':'',
+            'function': '',
+            'var': '',
+            'if': '',
+            'else': '',
+            'break': '#a626a4',
+            ' in ': '',
+            'if': '',
+            'return':'#a626a4'
         };
-        _self.html(_html);
-    });
-    /**
-    *code需要处理关键词
-    * <: &lt;
-    * >: &gt;
-    * &: &amp;
-    */
+        this.init();
+    };
+
+    indexPage.prototype.init = function(){
+        this.fnKey();
+        this.event();
+    };
+
+    indexPage.prototype.event = function(){
+        var self = this;
+
+        self.$body.on('click',"h3",function(){
+            var _next = $(this).next();
+            _next.css('display') == 'none' ?_next.slideDown():_next.slideUp();
+        });
+    };
+
+    indexPage.prototype.fnKey = function(){
+        var self = this;
+        var keys = self.keys;
+        /**
+        *code需要处理关键词
+        * <: &lt;
+        * >: &gt;
+        * &: &amp;
+        */
+        $.each($('code'),function(index,value){
+            var _self = $(this),
+                _html = _self.html();
+            for(var _key in keys){
+                if(!keys.hasOwnProperty(_key))
+                    continue;
+                var _color = keys[_key] || '#2366ccc2';
+                _html = _html.replace(new RegExp(_key,"gim"),'<span class="fb" style="color:'+_color+'">'+_key+'</span>');
+            };
+            _self.html(_html);
+        });
+    };
+
+    var _indexPage = new indexPage;
+    
+    
+    
 });
+/*
+http://2017.makemepulse.com/
+http://www.campoallecomete.it/#!/en
+https://29a.ch/sandbox/2012/fluidwebgl/
+https://www.valerian.bnpparibas/fr/intergalactic-mission
+http://david.li/paint/
+http://www.asitanosikaku.jp/works/
+http://www.bongiovi.tw/experiments/webgl/blossom/
+http://wow.techbrood.com/fiddle/3432?vm=full
+http://wow.techbrood.com/fiddle/33518
+http://wow.techbrood.com/fiddle/33513
+http://wow.techbrood.com/fiddle/33510
+http://wow.techbrood.com/fiddle/33452
+http://wow.techbrood.com/fiddle/33395
+http://wow.techbrood.com/fiddle/33378
+http://wow.techbrood.com/fiddle/33371
+http://wow.techbrood.com/fiddle/33343
+http://wow.techbrood.com/fiddle/33344
+http://wow.techbrood.com/fiddle/33264
+http://wow.techbrood.com/fiddle/33226
 
-Array.prototype.lbb = function(){
-    this.reverse();
-    return this;
-};
-String.prototype.lbb = function(){
-    return this + 'a'
-};
-Number.prototype.lbb = function(){
-    console.log(this);
-    var s = this;
-    s++;
-    return s
-}
-var arr = [1,2,3];
-var str = 'lbb';
-var num = 11;
-// console.log(arr.lbb());
-// console.log(str.lbb());
-// console.log(num.lbb());
 
+https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/getUserMedia 
+http://www.cnblogs.com/jscode/p/3601648.html
+http://reactnative.cn/
+http://www.cnblogs.com/fuqiang88/p/5577642.html
+http://www.adobe.com/devnet/archive/html5/articles/css-shaders.html
+https://mobile.ant.design/docs/react/introduce
+https://www.behance.net/gallery/6364671/Mobile-Portfolio-Concept
+*/
     
 
     
