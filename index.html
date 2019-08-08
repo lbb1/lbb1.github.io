@@ -45,6 +45,12 @@
     .fb{
         font-weight: bold;
     }
+    .tit{
+        cursor: pointer;
+    }
+    .con{
+        display: none
+    }
 </style>
 </head>
 <body>
@@ -254,7 +260,8 @@
 
     <h3>六、js继承</h3>
     <pre><code>
-        1) 原型链继承
+        <span class="tit">1) 原型链继承</span>
+        <span class="con">
                  function Person(){
                     this.name = 'mike';
                  };
@@ -274,8 +281,10 @@
                  console.log(_brother.name);
                  console.log(_brother.child);
                  console.log(_brother.weight);
+        </span>
 
-        2) 类式继承（借用构造函数）
+        <span class="tit">2) 类式继承（借用构造函数）</span>
+        <span class="con">
                 类式继承一般是通过运用call或者apply 进行子类型构造函数的内部调用超类型的构造函数。
                 function Person(age){
                    this.name = ['mike','lbb'];
@@ -287,8 +296,10 @@
                 var _child = new Child('mpp');
                 console.log(_child.name);
                 console.log(_child.age);
+        </span>
 
-        3) 组合继承
+        <span class="tit">3) 组合继承</span>
+        <span class="con">
                 function Person(age){
                    this.name = 'lbb';
                    this.age = age;
@@ -304,8 +315,10 @@
                 var _child = new Child('18');
                 console.log(_child.name);
                 console.log(_child.run());
+        </span>
 
-        4) 原型式继承
+        <span class="tit">4) 原型式继承</span>
+        <span class="con">
                 var myNew = {
                     name: 'lbb',
                     getName: function(){
@@ -336,28 +349,114 @@
                 };
                 var b1 = obj(box);
                 console.log(b1.name);
+        </span>
 
+        <span class="tit">5) 寄生组合式</span>
+        <span class="con">
+            function inheritPrototype (subType,superType) {
+                var prototype = Object.creat(superType.prototype);
+                prototype.constructor = subType;
+                subType.prototype = prototype;
+            };
+
+            function SuperType (name) {
+                this.name = name;
+                this.colors = ['red', 'blue', 'green'];
+            }
+            SuperType.prototype.sayName = function () {
+                console.log(this.name);
+            }
+            function SubType(name, age) {
+                //继承属性
+                SuperType.call(this,name);
+                this.age = age;
+            }
+            //继承方法
+            inheritPrototype(SubType,SuperType);
+            SubType.prototype.sayAge = function () {
+                console.log(this.age);
+            }
+
+            var instance = new SubType();
+        </span>
+
+        <span class="tit">6) es6实现类</span>
+        <span class="con">
+            //定义类
+            class Point {
+              constructor(x, y) {
+                this.x = x;
+                this.y = y;
+              }
+              toString() {
+                return '('+this.x+', '+this.y+')';
+              }
+            }
+            var point = new Point(2, 3);
+            point.toString() // (2, 3)
+            point.hasOwnProperty('x') // true
+            point.hasOwnProperty('y') // true
+            point.hasOwnProperty('toString') // false
+            point.__proto__.hasOwnProperty('toString') // true
+
+            Class的继承
+            class ColorPoint extends Point {
+              constructor(x, y, color) {
+                super(x, y); // 调用父类的constructor(x, y)
+                this.color = color;
+              }   
+              toString() {
+                return this.color + ' ' + super.toString(); // 调用父类的toString()
+              }
+            }
+        </span>
+    </code></pre>
+
+    <h3>七、闭包</h3>
+    <pre><code>
+        <span class="tit">1) 闭包的含义和理解</span>
+        <span class="con">
+        通俗地讲，JavaScript 中每个的函数都是一个闭包，但通常意义上嵌套的函数更能够体现出闭包的特性:
+                var generateClosure = function(){
+                    var count = 0;
+                    var get = function(){
+                        count++;
+                        return count;
+                    };
+                    return get;
+                };
+                var _fn = generateClosure();
+                console.log(_fn());
+                console.log(_fn());
+                console.log(_fn());
+        这段代码中，generateClosure() 函数中有一个局部变量count，初值为 0。还有一个叫做 get 的函数，get 将其父作用域，
+        也就是 generateClosure() 函数中的 count变量增加 1，并返回 count 的值。generateClosure() 的返回值是 get 函数。
+        在外部我们通过 counter变量调用了 generateClosure() 函数并获取了它的返回值，也就是 get 
+        函数，接下来反复调用几次 counter()，我们发现每次返回的值都递增了1。
+
+        让我们看看上面的例子有什么特点，按照通常命令式编程思维的理解，count 是generateClosure 函数内部的变量，
+        它的生命周期就是 generateClosure 被调用的时期，当 generateClosure 从调用栈中返回时，count 变量申请的
+        空间也就被释放。问题是，generateClosure() 调用结束后，counter() 却引用了“已经释放了的” count变量，
+        而且非但没有出错，反而每次调用 counter() 时还修改并返回了 count。这是怎么回事呢？
+        <b>这正是所谓闭包的特性。当一个函数返回它内部定义的一个函数时，就产生了一个闭包，闭包不但包括被返回的函数，还包括这个函数的定义环境。</b>
+        </span>
     </code></pre>
 
 
     </div>
 </body>
 <script type="text/javascript">
-    function Another(ori){
-        var clone = new Object(ori);
-        clone.say = function(){
-            alert('hi')
+    var generateClosure = function(){
+        var count = 0;
+        var get = function(){
+            count++;
+            return count;
         };
-        return clone
+        return get;
     };
-    var person = {
-        name: 'lbb',
-        frd: ['mpp','haha']
-    };
-    var obj = Another(person);
-    obj.say(); 
-
-
+    var _fn = generateClosure();
+    console.log(_fn());
+    console.log(_fn());
 </script>
 <!-- <script type="text/javascript" color="0,0,255" opacity='0.7' zIndex="-2" count="99" src="assets/src/js/test.js"></script> -->
 <script type="text/javascript" src="assets/src/js/jquery.js"></script>
@@ -394,7 +493,7 @@ $(function(){
     indexPage.prototype.event = function(){
         var self = this;
 
-        self.$body.on('click',"h3",function(){
+        self.$body.on('click',"h3,.tit",function(){
             var _next = $(this).next();
             _next.css('display') == 'none' ?_next.slideDown():_next.slideUp();
         });
