@@ -1,5 +1,4 @@
 // require.config({
-// 	// baseUrl: "js/lib",
 // 	paths: {
 // 		"jquery": "jquery",
 // 		"a": "a",
@@ -7,9 +6,8 @@
 // 		"jquery": "http://static.ickimg.com/assets/src/js/ickey/frontbom/frontbom"
 // 	}
 // })
-console.log('加载成功...');
-require(['jquery','a','b'],function($){
-	console.log(b());
+require(['jquery','a','b'],function($,a,b){
+	console.log(b.bb());
 	console.log(UTIL.trim('aa bb cc'))
 })
 
