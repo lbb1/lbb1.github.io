@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LBB's Blog</title>
+<link rel="stylesheet" href="assets/src/css/iview.css">
+<style type="text/css">
+html{
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+body{
+    width: 100vw;
+    margin: 0;
+    padding: 0 0 100px 0;
+    font-family: Tahoma,Verdana,Arial,"Microsoft Yahei",sans-serif;
+    font-size: 14px;
+    background: #7c8e7917;
+    color: #17561ef7;
+}
+h1{font-size: 24px;}
+h2{font-size: 20px;}
+h3{
+    font-size: 18px;
+    margin: 20px 0 0 0;
+    cursor: pointer;
+}
+h4{font-size: 16px;}
+h5{font-size: 14px;}
+h6{font-size: 12px;}
+.contain{
+    padding-top: 100px;
+    margin: auto;
+    width: 1000px;
+    font-size: 13px;
+    font-family: 微软雅黑;
+    letter-spacing: .02rem;
+    line-height: 20px;
+}
+.btn_tog{padding: 0 10px}
+.hide{display: none}
+.ml20{margin-left: 20px}
+.mt10{margin-top: 10px}
+</style>
+</head>
+<body>
+<span style="display: none">
+    http://www.cdce.cn/   统考注册
+    考试 9.7 - 9.10
+    每个区都有考点
+    7.25  9.00 报考
+    学位考报名   下学期开始   考试  11月9日
+    周日7.28上午9点-10:30 计算机面授课讲解  长宁区法华镇路535号10号楼302教室
+    a401997132   Ickey1234
+</span>
+
+单词的记忆根据艾宾浩斯记忆曲线，我们可以知道单词的长久记忆在于有规律的重复。
+每天选择背一百个词汇。背六遍。第一遍，要达到单词的完全记忆。但每个单词的背诵时间不得超过15秒。25分钟就可以完成。第二遍，选择在30分钟后。每个单词6秒记忆。第三遍，选择在30分钟后，依然是6秒记忆。第四遍在60分钟后。第五遍睡前，第六遍，第二天刚醒的时候。而6秒记忆就是听单词发音，读一遍，写一遍。每天的第一词以早晨为好。
+
+<div class="contain" id="app">
+	<button class="btn_tog" btn_tog="S">PAU</button>
+	<div class="js_list"></div>
+    <!-- <audio id="myAudio" src="http://openapi.youdao.com/ttsapi?q=good&langType=en&sign=CD76815AF0033837AB65AC67C4A21BB1&salt=1566152544074&voice=4&format=mp3&appKey=3aa0bd01a5dbb18b" controls="controls">
+        Your browser does not support the audio element.
+    </audio> -->
+</div>
+<!-- <script type="text/javascript" src="assets/src/js/require.js" data-main="assets/src/js/lib/main" defer async="true" ></script> -->
+<script type="text/template" data-tpl="words-tpl" id="wordsTpl">
+	<#var dex = 1;#>
+	<# $.each(CET,function(index,value){ #>
+	    <#if(dex <= 100){#>
+	    <div data_index="<#=dex#>" class="mt10">
+	    	<#=dex#>、<span class="word js_word" ><#=index#> </span><span class="hide ml20"><#=value#></span>
+	    </div>
+    	<#}#>
+    	<#dex++;#>
+    <# }) #>
+</script>
+<script src="assets/src/js/lib/jquery.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<script type="text/javascript" src="assets/src/js/cet.js"></script>
+<script type="text/javascript" src="assets/src/js/lib/template.js"></script>
+
+<!-- <script type="text/javascript" src="assets/src/js/vue/vue.min.js"></script>
+<script type="text/javascript" src="assets/src/js/vue/iview.min.js"></script> -->
+
+
+<script type="text/javascript">
+    $(function(){
+    	var english = function(){
+    		this.$body = $('body');
+    		this.timeSet = null;
+    		this.dex = 1;
+    		this.appKey = '3aa0bd01a5dbb18b';
+	        this.key = 'STnxMSlV9oTjBybT7h3O5Q3OLdvF7whC';//注意：暴露appSecret，有被盗用造成损失的风险
+    		this.params = {
+    			q: '',
+                appKey: this.appKey,
+                salt: (new Date).getTime(),
+                from: 'auto',
+                to: 'zh-CHS',
+                sign: ''
+    		};
+    		this.init();
+    	};
+        
+        /**
+        *  初始化
+        */
+    	english.prototype.init = function(){
+    		this.fill();
+    		this.event();
+    	};
+
+        /**
+        *  事件监听
+        */
+    	english.prototype.event = function(){
+    		var self = this;
+
+    		//展开翻译
+    		$('.word').hover(function(){
+	            $(this).next().show();
+	        },function(){
+	             $(this).next().hide();
+	        });
+
+	        //更多示例
+	        self.$body.on('click','.js_word',function(){
+	        	self.youdao($(this).html());
+	        });
+
+	        //暂停 开始
+	        self.$body.on('click','.btn_tog',function(){
+	        	var _self = $(this);
+	        	if(_self.attr('btn_tog') == 'S'){
+	        		_self.attr('btn_tog','P');
+	        		_self.html('STA');
+	        		clearInterval(self.timeSet);
+	        	}
+	        	else{
+	        		_self.attr('btn_tog','S');
+	        		_self.html('PAU');
+	        		var fill = self.fill(true);
+	        		fill();
+	        	}
+	        });
+
+    	};
+
+    	/**
+    	*  基础数据填充
+    	*/
+    	english.prototype.fill = function(call){
+    		var self = this;
+    		if(!call){
+	    		$('.js_list').html(_.template($('#wordsTpl').html(),{CET:CET}));
+	    		$('.hide').show();
+	    		$('[data_index]').hide();
+	    		$('[data_index='+self.dex+']').slideDown();
+	    		dexFn();
+    		};
+    		function dexFn(){
+    			self.timeSet = setInterval(function(){
+    				if(self.dex >= 100)
+    					clearInterval(self.timeSet);
+	    			$('[data_index='+self.dex+']').slideUp()
+	    			self.dex++;
+	    			$('[data_index='+self.dex+']').slideDown();
+	    		},1500);
+    		};
+    		return dexFn
+    	};
+        
+        /**
+        *  调取翻译
+        */
+    	english.prototype.youdao = function(_word){
+    		return false
+    		var self = this;
+    		var sign = self.appKey + _word + (new Date).getTime() +self.key;
+    		self.params.salt = (new Date).getTime();
+    		self.params.q = _word;
+    		self.params.sign = md5(sign);
+    		$.ajax({
+	            url: 'http://openapi.youdao.com/api',
+	            type: 'post',
+	            dataType: 'jsonp',
+	            data: self.params,
+	            success: function (data) {
+	                console.log(data.speakUrl);
+	                document.querySelector('#myAudio').setAttribute('src',data.speakUrl);
+	            } 
+	        });
+    	};
+    	new english;
+    })
+</script>
+</body>
+
+
+</html>
+
