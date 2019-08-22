@@ -3553,23 +3553,43 @@ Mr. Dursley hummed as he picked out his most boring tie for work, and Mrs. Dursl
         　　  require(['math'], function (math){
         　　　　  alert(math.add(1,1));
         　　  });
+    </code></pre>
 
+    <h3>九、jQuery解析</h3>
+    <pre><code>
+    	<span class="tit">1) 闭包结构</span>
+    	<span class="con">
+    		//用一个函数域包起来，就是所谓的沙箱
+    		//后面暴露 $ 和 jQuery 这 2 个变量给外界，尽量的避开变量冲突
+    		(function(window,u){
+    		})(window)
+    	</span>
+
+    	<span class="tit">2) 无new构造</span>
+    	<span class="con">
+    	</span>
     </code></pre>
 
     </div>
 </body>
 <script type="text/javascript">
-    var generateClosure = function(){
-        var count = 0;
-        var get = function(){
-            count++;
-            return count;
-        };
-        return get;
-    };
-    var _fn = generateClosure();
-    console.log(_fn());
-    console.log(_fn());
+	$('#test').text('a');
+	var test = new $('#test');
+	test.text('a');
+	(function(window,undefined){
+		var 
+		jQuery = function(selector,context){
+			//这里实例化方法 jQuery() 实际上调用了其拓展的原型方法 jQuery.fn.init 
+			return new jQuery.fn.init(selector,context,rootJquery);
+		},
+		jQuery.fn = jQuery.prototype = {
+			//实例化方法，可以称作jQuery对象构造器
+			init: function(selector,context,rootJquery){
+				...
+			};
+		}；
+		jQuery.fn.init.prototype = jQuery.fn;
+	})(window)
 </script>
 <!-- <script type="text/javascript" color="0,0,255" opacity='0.7' zIndex="-2" count="99" src="assets/src/js/test.js"></script> -->
 <script type="text/javascript" src="assets/src/js/lib/jquery.js"></script>
