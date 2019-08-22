@@ -3567,29 +3567,93 @@ Mr. Dursley hummed as he picked out his most boring tie for work, and Mrs. Dursl
 
     	<span class="tit">2) 无new构造</span>
     	<span class="con">
+            大部分人使用 jQuery 的时候都是使用第一种无 new 的构造方式，直接 $('') 进行构造，这也是 jQuery 
+            十分便捷的一个地方。当我们使用第一种无 new 构造方式的时候，其本质就是相当于 new jQuery()，那么在 jQuery 内部是如何实现的呢？看看：
+
+            $('#test').text('a');
+            var test = new $('#test');
+            test.text('a');
+
+            (function(window,undefined){
+                var 
+                jQuery = function(selector,context){
+                    //这里实例化方法 jQuery() 实际上调用了其拓展的原型方法 jQuery.fn.init 
+                    return new jQuery.fn.init(selector,context,rootJquery);
+                },
+                jQuery.fn = jQuery.prototype = {
+                    //实例化方法，可以称作jQuery对象构造器
+                    init: function(selector,context,rootJquery){
+                        ...
+                    };
+                };
+                    //jQuery 没有使用 new 运算符将 jQuery 实例化，而是直接调用其函数
+                    //要实现这样,那么 jQuery 就要看成一个类，且返回一个正确的实例
+                    //且实例还要能正确访问 jQuery 类原型上的属性与方法
+                    // jQuery 的方式是通过原型传递解决问题，把 jQuery 的原型传递给jQuery.prototype.init.prototype
+                    //所以通过这个方法生成的实例 this 所指向的仍然是 jQuery.fn，所以能正确访问 jQuery 类原型上的属性与方法
+                jQuery.fn.init.prototype = jQuery.fn;
+            })(window)
+
+            a. 首先要明确，使用 $('xxx') 这种实例化方式，其内部调用的是 return new jQuery.fn.init(selector, context, 
+                rootjQuery) 这一句话，也就是构造实例是交给了 jQuery.fn.init() 方法去完成。
+            b. 将 jQuery.fn.init 的 prototype 属性设置为 jQuery.fn，那么使用 new jQuery.fn.init() 
+               生成的对象的原型对象就是 jQuery.fn ，所以挂载到 jQuery.fn 上面的函数就相当于挂载到 jQuery.fn.init()
+               生成的 jQuery 对象上，所有使用 new jQuery.fn.init() 生成的对象也能够访问到 jQuery.fn 上的所有原型方法。
+            c. 也就是实例化方法存在这么一个关系链
+               jQuery.fn.init.prototype = jQuery.fn = jQuery.prototype ;
+               new jQuery.fn.init() 相当于 new jQuery() ;
+               jQuery() 返回的是 new jQuery.fn.init()，而 var obj = new jQuery()，所以这 2 者是相当的，所以我们可以无 new 实例化 jQuery 对象。
+
+            //列2
+            var lbb = function(selector,context){
+                return new lbb.fn.init(selector,context);
+            };
+            lbb.fn = lbb.prototype = {
+                init: function(_s){
+                    console.log(_s)
+                },
+                con: function(_s){
+                    console.log(_s)
+                }
+            };
+            lbb.fn.init.prototype = lbb.fn;
+            lbb().init('22');
+            var lbb2 = new lbb();
+            lbb2.init('33');
+            lbb().con(6666);
     	</span>
+
+        <span class="tit">3) jQuery方法的重载</span>
+        <span class="con">
+            $('#id').attr('title');
+            $('#id').attr('title','jQuery');
+            方法的重载即是一个方法实现多种功能，经常又是 get 又是set，虽然阅读起来十分不易，
+            但是从实用性的角度考虑，这也是为什么 jQuery 如此受欢迎的原因，大多数人使用 
+            jQuery() 构造方法使用的最多的就是直接实例化一个 jQuery 对象，但其实在它的内部实现中，有着 9 种不同的方法重载场景：
+            // 接受一个字符串，其中包含了用于匹配元素集合的 CSS 选择器
+            jQuery([selector,[context]])
+        </span>
     </code></pre>
 
     </div>
 </body>
 <script type="text/javascript">
-	$('#test').text('a');
-	var test = new $('#test');
-	test.text('a');
-	(function(window,undefined){
-		var 
-		jQuery = function(selector,context){
-			//这里实例化方法 jQuery() 实际上调用了其拓展的原型方法 jQuery.fn.init 
-			return new jQuery.fn.init(selector,context,rootJquery);
-		},
-		jQuery.fn = jQuery.prototype = {
-			//实例化方法，可以称作jQuery对象构造器
-			init: function(selector,context,rootJquery){
-				...
-			};
-		}；
-		jQuery.fn.init.prototype = jQuery.fn;
-	})(window)
+    var lbb = function(selector,context){
+        return new lbb.fn.init(selector,context);
+    };
+    lbb.fn = lbb.prototype = {
+        init: function(_s){
+            console.log(_s)
+        },
+        con: function(_s){
+            console.log(_s)
+        }
+    };
+    lbb.fn.init.prototype = lbb.fn;
+    lbb().init('22');
+    var lbb2 = new lbb();
+    lbb2.init('33');
+    lbb().con(6666);
 </script>
 <!-- <script type="text/javascript" color="0,0,255" opacity='0.7' zIndex="-2" count="99" src="assets/src/js/test.js"></script> -->
 <script type="text/javascript" src="assets/src/js/lib/jquery.js"></script>
