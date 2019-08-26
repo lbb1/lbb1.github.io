@@ -3667,6 +3667,65 @@ Mr. Dursley hummed as he picked out his most boring tie for work, and Mrs. Dursl
 
         <span class="tit">5) jQuery的链式调用及回溯</span>
         <span class="con">
+            这一点的实现其实很简单，只需要在要实现链式调用的方法的返回结果里，返回 this ，就能够实现链式调用了。
+            
+            除了链式调用，jQuery 甚至还允许回溯:
+            // 通过 end() 方法终止在当前链的最新过滤操作，返回上一个对象集合
+            $('div').eq(0).show().end().eq(1).hide();
+            当选择了 ('div').eq(0) 之后使用 end() 可以回溯到上一步选中的 jQuery 对象 $('div')，其内部实现其实是依靠添加了 
+            prevObject 这个属性：
+                query选择器在遍历的过程中都会找到一组元素（一个jQuery对象），
+                然后jQuery会把这组元素推入到栈中。
+                prevObject属性就指向这个对象栈中的前一个对象，
+                而通过这个属性可以回溯到最初的DOM元素集。
+                利用这个DOM元素栈可以减少重复的查询和遍历的操作，
+                而减少重复操作也正是优化jQuery代码性能的关键所在。
+
+            jQuery 完整的链式调用、增栈、回溯通过 return this 、 return this.pushStack() 、return this.prevObject 实现，看看源码实现：
+
+
+            jQuery.fn = jQuery.prototype = {
+                // 将一个 DOM 元素集合加入到 jQuery 栈
+                // 此方法在 jQuery 的 DOM 操作中被频繁的使用, 如在 parent(), find(), filter() 中
+                // pushStack() 方法通过改变一个 jQuery 对象的 prevObject 属性来跟踪链式调用中前一个方法返回的 DOM 结果集合
+                // 当我们在链式调用 end() 方法后, 内部就返回当前 jQuery 对象的 prevObject 属性
+                pushStack: function(elems) {
+                    // 构建一个新的jQuery对象，无参的 this.constructor()，只是返回引用this
+                    // jQuery.merge 把 elems 节点合并到新的 jQuery 对象
+                    // this.constructor 就是 jQuery 的构造函数 jQuery.fn.init，所以 this.constructor() 返回一个 jQuery 对象
+                    // 由于 jQuery.merge 函数返回的对象是第二个函数附加到第一个上面，所以 ret 也是一个 jQuery 对象，这里可以解释为什么 
+                    pushStack 出入的 DOM 对象也可以用 CSS 方法进行操作
+                    var ret = jQuery.merge(this.constructor(), elems);
+             
+                    // 给返回的新 jQuery 对象添加属性 prevObject
+                    // 所以也就是为什么通过 prevObject 能取到上一个合集的引用了
+                    ret.prevObject = this;
+                    ret.context = this.context;
+             
+                    // Return the newly-formed element set
+                    return ret;
+                },
+                // 回溯链式调用的上一个对象
+                end: function() {
+                    // 回溯的关键是返回 prevObject 属性
+                    // 而 prevObject 属性保存了上一步操作的 jQuery 对象集合
+                    return this.prevObject || this.constructor(null);
+                },
+                // 取当前 jQuery 对象的第 i 个
+                eq: function(i) {
+                    // jQuery 对象集合的长度
+                    var len = this.length,
+                        j = +i + (i < 0 ? len : 0);
+             
+                    // 利用 pushStack 返回
+                    return this.pushStack(j >= 0 && j < len ? [this[j]] : []);
+                }, 
+        }
+
+        总结：
+            1）end() 方法返回 prevObject 属性，这个属性记录了上一步操作的 jQuery 对象合集；
+            2）而 prevObject 属性由 pushStack() 方法生成，该方法将一个 DOM 元素集合加入到 jQuery 内部管理的一个栈中，通过改变 jQuery 对象的 prevObject 属性来跟踪链式调用中前一个方法返回的 DOM 结果集合
+            3）当我们在链式调用 end() 方法后，内部就返回当前 jQuery 对象的 prevObject 属性，完成回溯。
         </span>
     </code></pre>
 
