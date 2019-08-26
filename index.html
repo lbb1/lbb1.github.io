@@ -3632,6 +3632,41 @@ Mr. Dursley hummed as he picked out his most boring tie for work, and Mrs. Dursl
             jQuery() 构造方法使用的最多的就是直接实例化一个 jQuery 对象，但其实在它的内部实现中，有着 9 种不同的方法重载场景：
             // 接受一个字符串，其中包含了用于匹配元素集合的 CSS 选择器
             jQuery([selector,[context]])
+            // 传入 DOM 数组
+            jQuery(elementArray)
+            // 传入 JS 对象
+            jQuery(object)
+            // 传入 jQuery 对象
+            jQuery(jQuery object)
+            // 传入原始 HTML 的字符串来创建 DOM 元素
+            jQuery(html,[ownerDocument])
+            jQuery(html,[attributes])
+            // 传入空参数
+            jQuery()
+            // 绑定一个在 DOM 文档载入完成后执行的函数
+            jQuery(callback)
+        </span>
+
+        <span class="tit">4) jQuery.fn.extend 与 jQuery.extend</span>
+        <span class="con">
+        	1_	jQuery.extend(object) 为扩展 jQuery 类本身，为类添加新的静态方法；
+        	2_	jQuery.fn.extend(object) 给 jQuery 对象添加实例方法，也就是通过这个 extend 添加的新方法，实例化的 jQuery
+        		对象都能使用，因为它是挂载在 jQuery.fn 上的方法（上文有提到，jQuery.fn = jQuery.prototype ）
+        	
+        	1_	jQuery.extend(): 把两个或者更多的对象合并到第一个当中
+        	2_	jQuery.fn.extend()：把对象挂载到 jQuery 的 prototype 属性，来扩展一个新的 jQuery 实例方法。
+        		也就是说，使用 jQuery.extend() 拓展的静态方法，我们可以直接使用 $.xxx 进行调用（xxx是拓展的方法名），
+        		而使用 jQuery.fn.extend() 拓展的实例方法，需要使用 $().xxx 调用。
+        		
+        		需要注意的是这一句 jQuery.extend = jQuery.fn.extend = function() {} ，也就是 jQuery.extend 的实现和 jQuery.fn.extend
+        		的实现共用了同一个方法，但是为什么能够实现不同的功能了，这就要归功于 Javascript 强大（怪异？）的 this 了。
+    		1_	在 jQuery.extend() 中，this 的指向是 jQuery 对象(或者说是 jQuery 类)，所以这里扩展在 jQuery 上；
+    		2_	在 jQuery.fn.extend() 中，this 的指向是 fn 对象，前面有提到 jQuery.fn = jQuery.prototype 
+    			，也就是这里增加的是原型方法，也就是对象方法。
+        </span>
+
+        <span class="tit">5) jQuery的链式调用及回溯</span>
+        <span class="con">
         </span>
     </code></pre>
 
