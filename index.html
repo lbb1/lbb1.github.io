@@ -3727,6 +3727,42 @@ Mr. Dursley hummed as he picked out his most boring tie for work, and Mrs. Dursl
             2）而 prevObject 属性由 pushStack() 方法生成，该方法将一个 DOM 元素集合加入到 jQuery 内部管理的一个栈中，通过改变 jQuery 对象的 prevObject 属性来跟踪链式调用中前一个方法返回的 DOM 结果集合
             3）当我们在链式调用 end() 方法后，内部就返回当前 jQuery 对象的 prevObject 属性，完成回溯。
         </span>
+
+        <span class="tit">6) jQuery 变量冲突处理</span>
+        <span class="con">
+            jQuery 变量的冲突处理，通过一开始保存全局变量的 window.jQuery 以及 windw.$ 。
+            当需要处理冲突的时候，调用静态方法 noConflict()，让出变量的控制权，源码如下：
+            (function(window, undefined) {
+                var
+                    // Map over jQuery in case of overwrite
+                    // 设置别名，通过两个私有变量映射了 window 环境下的 jQuery 和 $ 两个对象，以防止变量被强行覆盖
+                    _jQuery = window.jQuery,
+                    _$ = window.$;
+             
+                jQuery.extend({
+                    // noConflict() 方法让出变量 $ 的 jQuery 控制权，这样其他脚本就可以使用它了
+                    // 通过全名替代简写的方式来使用 jQuery
+                    // deep -- 布尔值，指示是否允许彻底将 jQuery 变量还原(移交 $ 引用的同时是否移交 jQuery 对象本身)
+                    noConflict: function(deep) {
+                        // 判断全局 $ 变量是否等于 jQuery 变量
+                        // 如果等于，则重新还原全局变量 $ 为 jQuery 运行之前的变量（存储在内部变量 _$ 中）
+                        if (window.$ === jQuery) {
+                            // 此时 jQuery 别名 $ 失效
+                            window.$ = _$;
+                        }
+                        // 当开启深度冲突处理并且全局变量 jQuery 等于内部 jQuery，则把全局 jQuery 还原成之前的状况
+                        if (deep && window.jQuery === jQuery) {
+                            // 如果 deep 为 true，此时 jQuery 失效
+                            window.jQuery = _jQuery;
+                        }
+             
+                        // 这里返回的是 jQuery 库内部的 jQuery 构造函数（new jQuery.fn.init()）
+                        // 像使用 $ 一样尽情使用它吧
+                        return jQuery;
+                    }
+                })
+            }(window)
+        </span>
     </code></pre>
 
     </div>
