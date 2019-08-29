@@ -3763,32 +3763,90 @@ Mr. Dursley hummed as he picked out his most boring tie for work, and Mrs. Dursl
                 })
             }(window)
         </span>
+
+        <span class="tit">7) jQuery中的bind(),live(),delegate(),on()的去区别</span>
+        <span class="con">
+        	事件冒泡（也称作事件传递）:点击一个链接，触发绑定在链接元素上的 click 事件，进而触发绑定到这个元素的click事件的函数。
+        	然后，这个 click 事件会从DOM树向上传递，传播到父元素，然后传递给每一个祖先元素。
+        	在DOM树中， document 是根节点。
+
+        	1) .bind
+        		$('a').bind('click',function() { alert("That tickles!") });
+        		这是最直接的绑定方法。jQuery 扫描文档找到所有 $(‘a’) 元素，然后给每一个找到的元素的 click 事件绑定处理函数。
+        		优点：
+        			a_	这个方法提供了一种在各种浏览器之间对事件处理的兼容性解决方案非常方便简单的绑定事件到元素上
+					b_	.click(), .hover()...这些非常方便的事件绑定，都是bind的一种简化处理方式
+					c_	对于利用ID选出来的元素是非常好的，不仅仅是很快的可以hook上去(因为一个页面只有一个id),而且当事件发生时，handler可以立即被执行(
+					相对于后面的live, delegate)实现方式
+				缺点：
+					它会绑定事件到所有的选出来的元素上,它不会绑定到在它执行完后动态添加的那些元素上
+					当页面加载完的时候，你才可以进行bind()，所以可能产生效率问题
+
+			2)	.live()
+				$('a').live('click',function() { alert("That tickles!") });
+				jQuery绑定处理函数到 $(document) 元素，并把 ‘click’ 和 ‘a’ 作为函数的参数。有事件冒泡到document节点的时候，检查这个事件是不是 click 
+				事件，target element能不能匹配 ‘a’ css选择器，如果两个条件都是true，处理函数执行。
+				优点：
+					a_	这里仅有一次的事件绑定，绑定到document上而不像.bind()那样给所有的元素挨个绑定
+					b_	那些动态添加的elemtns依然可以触发那些早先绑定的事件，因为事件真正的绑定是在document上
+					c_	你可以在document ready之前就可以绑定那些需要的事件
+				缺点：
+					a_	从1.7开始已经不被推荐了，所以你也要开始逐步淘汰它了。
+					b_	当使用event.stopPropagation()是没用的，因为都要到达document
+					c_	因为所有的selector/event都被绑定到document, 所以当我们使用matchSelector方法来选出那个事件被调用时，会非常慢
+					d_	当发生事件的元素在你的DOM树中很深的时候，会有performance问题
+					e_	live方法有一个最大的缺点，只能用css选择器，用起来很不方便。
+
+			3) .delegate()
+				$('#container').delegate('a','click',function() { alert("That tickles!") });
+				jQuery扫描文档找到 $(‘#container’)，绑定处理函数到他的 click 事件，’a’ css选择器作为函数的参数。当有事件冒泡到 $(‘#container’)，检查事件是不是 
+				click，并检查target element是不是匹配css选择器，如果两者都符合，执行函数。
+				优点：
+					a_	你可以选择你把这个事件放到那个元素上了
+					b_	chaining被正确的支持了
+					c_	jQuery仍然需要迭代查找所有的selector/event data来决定那个子元素来匹配，但是因为你可以决定放在那个根元素上，所以可以有效的减小你所要查找的元素。
+					d_	可以用在动态添加的元素上
+				缺点：
+					a_	需要查找那个那个元素上发生了那个事件了，尽管比document少很多了，不过，你还是得浪费时间来查找
+
+			4) .on()
+			   .bind(), .live(), .delegate()都是通过.on()来实现的，.unbind(), .die(), .undelegate(),也是一样的都是通过.off()来实现的，
+			   优点：
+			   		a_	提供了一种统一绑定事件的方法
+			   缺点：
+			   		a_	也许会对你产生一些困扰，因为它隐藏了一前面我们所介绍的三种方法的细节。
+
+			5)  阻止冒泡
+				$('a').bind('click',function(){  
+				    e.preventDefault();   
+				    //or   
+				    e.stopPropagation();
+				})
+				但是在这里，用 live 或 delegate 方法绑定的事件会一直传递到事件真正绑定的地方才会执行。这时其他的函数已经执行过了。
+
+				阻止事件冒泡：
+				if (window.event) {
+				   e.cancelBubble=true;// ie6、7、8下阻止冒泡
+				} else {
+				  //e.preventDefault();
+				   e.stopPropagation();// 其它标准浏览器下阻止冒泡
+				}
+
+        </span>
     </code></pre>
+
+
 
     </div>
 </body>
-<script type="text/javascript">
-    var lbb = function(selector,context){
-        return new lbb.fn.init(selector,context);
-    };
-    lbb.fn = lbb.prototype = {
-        init: function(_s){
-            console.log(_s)
-        },
-        con: function(_s){
-            console.log(_s)
-        }
-    };
-    lbb.fn.init.prototype = lbb.fn;
-    lbb().init('22');
-    var lbb2 = new lbb();
-    lbb2.init('33');
-    lbb().con(6666);
-</script>
+
 <!-- <script type="text/javascript" color="0,0,255" opacity='0.7' zIndex="-2" count="99" src="assets/src/js/test.js"></script> -->
 <script type="text/javascript" src="assets/src/js/lib/jquery.js"></script>
 </html>
+<script type="text/javascript">
 
+	
+</script>
 
 
 
