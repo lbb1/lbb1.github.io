@@ -49,7 +49,9 @@ h6{font-size: 12px;}
 每天选择背一百个词汇。背六遍。第一遍，要达到单词的完全记忆。但每个单词的背诵时间不得超过15秒。25分钟就可以完成。第二遍，选择在30分钟后。每个单词6秒记忆。第三遍，选择在30分钟后，依然是6秒记忆。第四遍在60分钟后。第五遍睡前，第六遍，第二天刚醒的时候。而6秒记忆就是听单词发音，读一遍，写一遍。每天的第一词以早晨为好。
 
 <div class="contain" id="app">
-	<button class="btn_tog" btn_tog="S">PAU</button>
+	<button class="btn_tog js_btn_tog" btn_tog="S">PAU</button>
+	<button class="btn_tog ml20" btn_prev>PREV</button>
+	<button class="btn_tog" btn_next>NEXT</button>
 	<div class="js_list"></div>
     <!-- <audio id="myAudio" src="http://openapi.youdao.com/ttsapi?q=good&langType=en&sign=CD76815AF0033837AB65AC67C4A21BB1&salt=1566152544074&voice=4&format=mp3&appKey=3aa0bd01a5dbb18b" controls="controls">
         Your browser does not support the audio element.
@@ -121,8 +123,26 @@ h6{font-size: 12px;}
 	        	self.youdao($(this).html());
 	        });
 
+	        //更多示例
+	        self.$body.on('click','[btn_prev]',function(){
+	        	clearInterval(self.timeSet);
+	        	$('[data_index='+self.dex+']').slideUp();
+	        	self.dex--;
+	        	$('[data_index='+self.dex+']').slideDown()
+	        });
+
+	        //更多示例
+	        self.$body.on('click','[btn_next]',function(){
+	        	clearInterval(self.timeSet);
+	        	$('[data_index='+self.dex+']').slideUp();
+	        	self.dex++;
+	        	$('[data_index='+self.dex+']').slideDown()
+	        });
+
+	        
+
 	        //暂停 开始
-	        self.$body.on('click','.btn_tog',function(){
+	        self.$body.on('click','.js_btn_tog',function(){
 	        	var _self = $(this);
 	        	if(_self.attr('btn_tog') == 'S'){
 	        		_self.attr('btn_tog','P');
@@ -156,7 +176,7 @@ h6{font-size: 12px;}
     		function dexFn(){
     			self.timeSet = setInterval(function(){
     				if(self.dex >= 100)
-    					clearInterval(self.timeSet);
+    					self.dex = 0;//clearInterval(self.timeSet);
 	    			$('[data_index='+self.dex+']').slideUp()
 	    			self.dex++;
 	    			$('[data_index='+self.dex+']').slideDown();
@@ -190,7 +210,7 @@ h6{font-size: 12px;}
     })
 </script>
 
-<div style="width: 100px;height: 60px;background: green;opacity: .1">
+<div style="width: 100px;height: 60px;background: green;opacity: 0">
 	<iframe id="myGame" style="width:100px;height: 60px"></iframe>
 </div>
 <script type="text/javascript">
@@ -203,7 +223,7 @@ h6{font-size: 12px;}
 	myGame();
 	$(function(){
 		//http://app100616028.qzone.qzoneapp.com/?openid=EB1665437639A680E92EA932F0F09BD5&openkey=277987CE100AC3CF1E6E0C802038095B&pf=qzone&pfkey=53fbb1039082ec8663b649b4cd95f6f2&qz_width=950 
-		$('#myGame').attr('src','http://app100616028.qzone.qzoneapp.com/?openid=EB1665437639A680E92EA932F0F09BD5&openkey=683844C9F9A768576C3A1BB880F1C29B&pf=qzone&pfkey=76ca3d1f34c4d66b6f13b9a91d7b0774&qz_width=950')
+		$('#myGame').attr('src','http://app100616028.qzone.qzoneapp.com/?openid=EB1665437639A680E92EA932F0F09BD5&openkey=893A0CF7FE3D4DF49D291CC093CB4B16&pf=qzone&pfkey=bdfdddc3b262bc23b2644dbb421e667c&qz_width=950')
 	})
 	
 </script>
