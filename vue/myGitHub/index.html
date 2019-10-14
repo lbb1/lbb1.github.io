@@ -6,8 +6,20 @@
     <title>yes</title>
   </head>
   <body>
-  	333
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>
 </html>
+
+<div id="myTest">
+    {{message}}
+</div>
+<script type="text/javascript" src=""></script>
+<script>
+    var app = new Vue({
+        el:'#myTest',
+        data: {
+            message: '222'
+        }
+    })
+</script>

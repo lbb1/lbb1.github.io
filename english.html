@@ -164,7 +164,7 @@ h6{font-size: 12px;}
     		var self = this;
     		if(!call){
 	    		$('.js_list').html(_.template($('#wordsTpl').html(),{CET:CET}));
-	    		// $('[data_index]').hide();
+	    		$('[data_index]:lt(100)').show();
 	    		// $('[data_index='+self.dex+']').slideDown();
 	    		//dexFn();
     		};
