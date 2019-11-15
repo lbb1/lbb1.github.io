@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<div id="app">
+			<p>msg:{{msg}}</p>
+			<!-- <div v-on:click="todo2">333
+				<button type="button" v-on:click="todo" :value="msg">click</button>
+				<button type="button" v-on:click.stop="todo" >click_prevent</button>
+				<button @click.stop="todo">@click</button>
+			</div> -->
+			
+			<p>{{reverseMsg}}</p>
+			<p>{{getDate}}></p>
+		</div>
+	</body>
+	<script src="vue.js"></script>
+	
+	<script type="text/javascript">
+		var vm = new Vue({
+			el: '#app',
+			data:{
+				msg :'test',
+				some: 'click',
+				nameA: '2233'
+			},
+			/*侦听属性*/
+			watch: {
+				nameA: function(val){
+					console.log(val)
+				}
+			},
+			
+			/*计算属性*/
+			computed: {
+				reverseMsg: function(){
+					return this.msg.split('').reverse().join('')
+				},
+				getDate: function(){
+					return new Date()
+				}
+			},
+			
+			methods:{
+				'todo': function(){
+					console.log(this.msg)
+				},
+				'todo2': function(){
+					console.log('2222'+this.msg)
+				}
+			}
+		});
+		setTimeout(function(){
+			vm.msg = "22334455";
+			console.log(vm.getDate)
+		},3000);
+		
+	</script>
+	
+</html>
