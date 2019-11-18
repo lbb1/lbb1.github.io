@@ -15,9 +15,147 @@
 			
 			<p>{{reverseMsg}}</p>
 			<p>{{getDate}}></p>
+			<p>computed: {{fullName}}</p>
+			
+			<p>question: <input v-model="question" /></p>
+			<p>answer: {{answer}}</p>
+			
+			<!----------------------绑定 HTML Class------------------>
+			<!--对象语法-->
+			<p class="fw-b" v-bind:class="{red:is_red,big:is_big}">:bind:isRed</p>
+			<p v-bind:class="class_obj">classObj</p>
+			<p v-bind:class="class_cp">classcomPuted</p>
+			<!--数组语法-->
+			<p v-bind:class="[is_red? 'red' : 'yellow','big']">is_red?</p>
+			<!--不加引号为对象， 加引号为具体的类名-->
+			<p v-bind:class="[{red:is_red},'big']">is_red</p>
+			<p v-bind:class="[{red:is_red},big]">is_red</p>
+			
+			<!----------------------绑定内联样式------------------>
+			<p v-bind:style="{color: d_green,fontSize:fontSize + 'px'}">bind-style</p>
+			<p v-bind:style="style_obj">styleObj</p>
+			<p v-bind:style="[style_obj]">[style_obj]</p>
+			
+			<!----------------------条件渲染------------------>
+			<p v-if="is_red">if-red</p>
+			<p v-else>else-big</p>
+			<p v-if="c_type === 'A'">AAA</p>
+			<p v-else-if="c_type === 'B'">BBB</p>
+			<p v-else>!A!B</p>
+			<!--
+				v-if vs v-show
+				v-if 是“真正”的条件渲染，因为它会确保在切换过程中条件块内的事件监听器和子组件适当地被销毁和重建。
+				v-if 也是惰性的：如果在初始渲染时条件为假，则什么也不做——直到条件第一次变为真时，才会开始渲染条件块。
+				v-show 就简单得多——不管初始条件是什么，元素总是会被渲染，并且只是简单地基于 CSS 进行切换。
+				一般来说，v-if 有更高的切换开销，而 v-show 有更高的初始渲染开销。因此，如果需要非常频繁地切换，则使用 v-show 较好；
+				如果在运行时条件很少改变，则使用 v-if 较好。
+			-->
+			<p v-show="is_red">show-isRed</p>
+			
+			<!--用 key 管理可复用的元素-->
+			<!--
+				Vue 会尽可能高效地渲染元素，通常会复用已有元素而不是从头开始渲染。这么做除了使 Vue 变得非常快之外，还有其它一些好处。
+				例如，如果你允许用户在不同的登录方式之间切换：
+			-->
+			<template v-if="loginT === 'name'">
+				<label>userName</label>
+				<input placeholder="enter your name" />
+			</template>
+			<template v-else>
+				<label>email</label>
+				<input placeholder="enter your email" />
+			</template>
+			<!--
+				这样也不总是符合实际需求，所以 Vue 为你提供了一种方式来表达“这两个元素是完全独立的，不要复用它们”。只需添加一个具有唯一值的
+				key 属性即可
+			-->
+			<template v-if="loginT === 'name'">
+				<label>Key-userName</label>
+				<input placeholder="enter your name" key="name-input" />
+			</template>
+			<template v-else>
+				<label>Key-email</label>
+				<input placeholder="enter your email" key="email-input" />
+			</template>
+			
+			<!--------------------列表渲染------------------>
+			<ul>
+				<li v-for="item in items">{{item.message}}</li>
+				<li v-for="(item,index) in items">{{index}}、{{item.message}}</li>
+				<!--你也可以用 of 替代 in 作为分隔符，因为它更接近 JavaScript 迭代器的语法-->
+				<li v-for="item of items">{{item.message}}</li>
+				<!--遍历对象-->
+				<li v-for="(val,name) in obj">{{name}}: {{val}}</li>
+				<li v-for="(val,name,index) in obj">{{index}}、{{name}}: {{val}}</li>
+				<!--维护状态-->
+				<!--
+					当 Vue 正在更新使用 v-for 渲染的元素列表时，它默认使用“就地更新”的策略。如果数据项的顺序被改变，Vue 将不会移动 DOM 元素来匹配
+					数据项的顺序，而是就地更新每个元素，并且确保它们在每个索引位置正确渲染。
+					这个默认的模式是高效的，但是只适用于不依赖子组件状态或临时 DOM 状态 (例如：表单输入值) 的列表渲染输出。
+					为了给 Vue 一个提示，以便它能跟踪每个节点的身份，从而重用和重新排序现有元素，你需要为每项提供一个唯一 key 属性：
+					<div v-for="item in items" v-bind:key="item.id"></div
+					:建议尽可能在使用 v-for 时提供 key attribute，除非遍历输出的 DOM 内容非常简单，或者是刻意依赖默认行为以获取性能上的提升。
+				-->
+			</ul>
+			<!--数组更新检测
+				- 变异方法 (mutation method):
+				  Vue 将被侦听的数组的变异方法进行了包裹，所以它们也将会触发视图更新。这些被包裹过的方法
+				  push(),pop(),shift(),unshift(),splice(),sort(),reverse()
+				  
+				- 替换数组
+				  变异方法，顾名思义，会改变调用了这些方法的原始数组。相比之下，也有非变异 (non-mutating method) 方法，例如 filter()、concat() 
+				  和 slice() 。它们不会改变原始数组，而总是返回一个新数组。当使用非变异方法时，可以用新数组替换旧数组：
+				  vm.items = vm.items.filter(function(item){
+					  return item.message.match(/Foo/);
+				  });
+				  你可能认为这将导致 Vue 丢弃现有 DOM 并重新渲染整个列表。幸运的是，事实并非如此。Vue 为了使得 DOM 元素得到最大范围的重用而实现了
+				  一些智能的启发式方法，所以用一个含有相同元素的数组去替换原来的数组是非常高效的操作。
+				  
+				 - 注意事项
+				   由于 JavaScript 的限制，Vue 不能检测以下数组的变动：
+				   1.当你利用索引直接设置一个数组项时，例如：vm.items[indexOfItem] = newValue;
+				     优化：
+					     Vue.set(vm.items, indexOfItem, newValue) or  vm.$set(vm.items, indexOfItem, newValue)
+						 vm.items.splice(indexOfItem, 1, newValue)
+				   2.当你修改数组的长度时，例如：vm.items.length = newLength
+				     优化：
+					     vm.items.splice(newLength)
+			-->
+			
+			<!--对象变更检测注意事项
+			    - 由于 JavaScript 的限制，Vue 不能检测对象属性的添加或删除：
+				  对于已经创建的实例，Vue 不允许动态添加根级别的响应式属性。但是，可以使用 
+				  Vue.set(object, propertyName, value)
+			-->
+			
+			<!--显示过滤/排序后的结果
+				- 有时，我们想要显示一个数组经过过滤或排序后的版本，而不实际改变或重置原始数据。在这种情况下，可以创建一个计算属性，
+				  来返回过滤或排序后的数组。
+			-->
+			<ul>
+				<li v-for="item in numbersRe">{{item}}</li>
+				<!--在计算属性不适用的情况下 (例如，在嵌套 v-for 循环中) 你可以使用一个方法：-->
+				<li v-for="item in getMod(numbers)">{{item}}</li>
+			</ul>
+			
+			<!--在 v-for 里使用值范围 它会把模板重复对应次数。-->
+			<span v-for="n in 2" :class="{red:is_red}">{{n}}</span>
+			
+			<!--在template上使用-->
+			<ul>
+				<template v-for="(item,index) in items">
+					<li>{{index}}</li>
+					<li>{{item.message}}</li>
+				</template>
+			</ul>
+			
+			<button @click="greet">@click</button>
+				
 		</div>
 	</body>
 	<script src="vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
 	
 	<script type="text/javascript">
 		var vm = new Vue({
@@ -25,33 +163,129 @@
 			data:{
 				msg :'test',
 				some: 'click',
-				nameA: '2233'
+				nameA: '2233',
+				nameB: 'aabb',
+				question: '',
+				answer: 'I cannot give you an answer until you ask a question',
+				is_red: true,
+				is_big: true,
+				big: 'big',
+				class_obj: {
+					red: true,
+					big: false
+				},
+				style_obj: {
+					color:'#ff9900',
+					'font-size': '18px'
+				},
+				d_green: 'green',
+				fontSize: 12,
+				c_type: 'B',
+				loginT: 'name',
+				items: [
+				  { message: 'Foo' },
+				  { message: 'Bar' }
+				],
+				obj: {
+				  title: 'How to do lists in Vue',
+				  author: 'Jane Doe',
+				  publishedAt: '2016-04-10'
+				},
+				numbers: [1,2,3,4,5]
 			},
 			/*侦听属性*/
+			//Vue 提供了一种更通用的方式来观察和响应 Vue 实例上的数据变动：侦听属性。当你有一些数据需要随着其它数据变动而变动时
 			watch: {
 				nameA: function(val){
 					console.log(val)
-				}
+				},
+				question: function(newQ,oldQ){
+					this.answer = 'Waring for you to stop typing';
+					this.debouncedGetAnswer();
+				},
 			},
 			
 			/*计算属性*/
+			//计算属性是基于它们的响应式依赖进行缓存的。只在相关响应式依赖发生改变时它们才会重新求值。这就意味着只要 message 还没有发生改变，多次访问 reversedMessage 
+			//计算属性会立即返回之前的计算结果，而不必再次执行函数
 			computed: {
 				reverseMsg: function(){
 					return this.msg.split('').reverse().join('')
 				},
 				getDate: function(){
 					return new Date()
+				},
+				
+				//计算属性默认只有 getter ，不过在需要时你也可以提供一个 setter 
+				fullName: {
+					
+					//getter
+					get: function(){
+						return this.nameA + ' ' + this.nameB;
+					},
+					
+					//setter
+					set: function(newVal){
+						var _newVal = newVal.split(' ');
+						this.nameA = _newVal[0];
+						this.nameB = _newVal[1];
+					},
+					
+				},
+				
+				class_cp: function(){
+					return {
+						red: this.is_red,
+						big: this.is_big
+					}
+				},
+				numbersRe: function(){
+					return this.numbers.filter(function(num){
+						return num%2 === 0
+					})
 				}
 			},
 			
+			created: function(){
+				// `_.debounce` 是一个通过 Lodash 限制操作频率的函数。
+				this.debouncedGetAnswer = _.debounce(this.getAnswer, 500);
+			},
+			
+			/*方法*/
 			methods:{
 				'todo': function(){
 					console.log(this.msg)
 				},
 				'todo2': function(){
 					console.log('2222'+this.msg)
+				},
+				'getAnswer': function(){
+					var vm = this;
+					var url = 'https://www.ickey.cn/mic/search?_csrf=RG4wdjRBWncpO2E7GSQiTnwvSTNFOyxGKz9zBVM1EwEzHHcCYQ0oOA%3D%3D&keyword='+vm.question+'&pageSize=2&_=1574056296321';
+					axios.get(url)
+					.then(function(response){
+						vm.answer = new Date();
+						console.log(response);
+					})
+					.catch(function(err){
+						console.log('Error:' + error)
+					})
+				},
+				getMod: function(nums){
+					return nums.filter(function(_num){
+						return _num%2 === 0
+					})
+				},
+				greet: function(event){
+					alert('click');
+					console.log(event);
+					if(event){
+						alert(event.target.tagName)
+					};
 				}
-			}
+			},
+			
+			
 		});
 		setTimeout(function(){
 			vm.msg = "22334455";
@@ -59,5 +293,19 @@
 		},3000);
 		
 	</script>
+	<style type="text/css">
+		.red{
+			color: red;
+		}
+		.yellow{
+			color: yellow;
+		}
+		.big{
+			font-size: 30px;
+		}
+		.fw-b{
+			font-weight: bold;
+		}
+	</style>
 	
 </html>
