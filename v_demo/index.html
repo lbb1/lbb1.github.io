@@ -166,11 +166,36 @@
 			-->
 			<div type="button" @click="say('parents')">
 				333555
-				<button type="button" @click.stop="say('stop')">button</button>
-				<form action="" method="" v-on:submit.prevent="say('submit')">
-					<button type="submit">submit</button>
-				</form>
+				<button type="button" @click.stop="say('stop')">button_stop</button>
 			</div>
+			<form action="" method="" v-on:submit.prevent="say('submit')">
+				<button type="submit">submit</button>
+			</form>
+			<div type="button" @click.capture="say('parents')">
+				parents_capture
+				<button type="button" @click.stop="say('stop')">button_stop</button>
+			</div>
+			<div type="button" @click.self="say('parents')">
+				parents_self
+				<button type="button" @click="say('parents_self')">button_stop</button>
+			</div>
+			<button type="button" v-on:click.once="say('once')">once_click</button>
+			<!--使用修饰符时，顺序很重要；相应的代码会以同样的顺序产生。因此，用v-on:click.prevent.self 会阻止所有的点击，
+			而 v-on:click.self.prevent 只会阻止对元素自身的点击。 -->
+			
+			<!-- 滚动事件的默认行为 (即滚动行为) 将会立即触发 -->
+			<!-- 而不会等待 `onScroll` 完成  -->
+			<!-- 这其中包含 `event.preventDefault()` 的情况 -->
+			<div v-on:scroll="onScroll" style="width: 100px;height: 100px;overflow: auto;">
+				<div style="height: 200px;">sc</div>
+			</div>
+			<div v-on:scroll.passive="onScroll" style="width: 100px;height: 100px;overflow: auto;">
+				<div style="height: 200px;">sc2</div>
+			</div>
+			
+			<!--------------------按键修饰符------------------>
+			<input v-on:keyup.enter="submit" />
+			<input v-on:keyup.page-down="submit" />
 			
 				
 		</div>
@@ -307,6 +332,12 @@
 				},
 				say: function(msg,event){
 					alert(msg)
+				},
+				onScroll: function(){
+					console.log(new Date())
+				},
+				submit: function(){
+					console.log(event.target.value)
 				}
 			},
 			
@@ -314,7 +345,7 @@
 		});
 		setTimeout(function(){
 			vm.msg = "22334455";
-			console.log(vm.getDate)
+			//console.log(vm.getDate)
 		},3000);
 		
 	</script>
