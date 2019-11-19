@@ -149,7 +149,29 @@
 				</template>
 			</ul>
 			
+			
+			<!--------------------事件处理------------------>
 			<button @click="greet">@click</button>
+			<button @click="say('hi',$event)">@clickSay</button>
+			<!--事件修饰符
+				.stop 阻止单击事件继续传播
+				.prevent 阻止默认行为 (提交事件不再重载页面)
+				.capture 添加事件监听器时使用事件捕获模式,即内部元素触发的事件先在此处理，然后才交由内部元素进行处理
+				.self 只当在 event.target 是当前元素自身时触发处理函数	即事件不是从内部元素触发的
+				.once 点击事件只会触发一次
+				.passive 滚动事件的默认行为 (即滚动行为) 将会立即触发 而不会等待 `onScroll` 完成
+						 这个 .passive 修饰符尤其能够提升移动端的性能。
+						 不要把 .passive 和 .prevent 一起使用，因为 .prevent 将会被忽略，同时浏览器可能会向你展示一个警告。
+						 请记住，.passive 会告诉浏览器你不想阻止事件的默认行为。
+			-->
+			<div type="button" @click="say('parents')">
+				333555
+				<button type="button" @click.stop="say('stop')">button</button>
+				<form action="" method="" v-on:submit.prevent="say('submit')">
+					<button type="submit">submit</button>
+				</form>
+			</div>
+			
 				
 		</div>
 	</body>
@@ -282,6 +304,9 @@
 					if(event){
 						alert(event.target.tagName)
 					};
+				},
+				say: function(msg,event){
+					alert(msg)
 				}
 			},
 			
