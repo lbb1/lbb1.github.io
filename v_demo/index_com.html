@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<div id="app">
+			<!--
+			组件的复用
+				你可以将组件进行任意次数的复用：
+				当点击按钮时，每个组件都会各自独立维护它的 count。因为每用一次组件，就会有一个它的新实例被创建
+				一个组件的 data 选项必须是一个函数，因此每个实例可以维护一份被返回对象的独立的拷贝
+			-->
+			<button-count></button-count>
+			<button-count></button-count>
+			
+			<!--通过 Prop 向子组件传递数据-->
+			<blog tit="blogA"></blog>
+			<blog v-for="post in posts" v-bind:tit="post.title" v-bind:key="post.id"></blog>
+			
+			<!--
+			单个根元素
+			-->
+			<div :style="{fontSize:fs+'px'}">
+				<blog2 v-for="post in posts" v-bind:post="post" v-on:big-text="fs+=$event" v-bind:key="'b'+post.id"></blog2>
+			</div>
+		</div>
+	</body>
+	<script src="vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+	
+	<script type="text/javascript">
+		Vue.component('button-count',{
+			data: function(){
+				return {
+					count: 0
+				}
+			},
+			template: '<button @click="count++">add{{count}}</button>'
+		});
+		
+		Vue.component('blog',{
+			props: ['tit'],
+			template: '<h3>{{tit}}</h3>'
+		});
+		
+		Vue.component('blog2',{
+			props:['post'],
+			template: '<div class="blog-post">\
+				<h5>{{post.title}}</h5>\
+				<div v-html="post.con"></div>\
+				<button @click="$emit(\'big-text\',1)">big</button>\
+			</div>'
+		});
+		
+		var vm = new Vue({
+			el: '#app',
+			data:{
+				fs:12,
+				posts :[
+					{title:'22',id:1,con:'<span style="color:#ff9900">text...<span>'},
+					{title:'33',id:2,con:'<span style="color:#ff9900">text2...<span>'},
+				],
+			},
+			/*侦听属性*/
+			watch: {
+			},
+			
+			/*计算属性*/
+			computed: {
+			},
+			
+			created: function(){
+			},
+			
+			/*方法*/
+			methods:{
+			},
+		});
+	
+		
+	</script>
+	<style type="text/css">
+	</style>
+	
+</html>
