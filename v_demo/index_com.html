@@ -24,7 +24,16 @@
 			-->
 			<div :style="{fontSize:fs+'px'}">
 				<blog2 v-for="post in posts" v-bind:post="post" v-on:big-text="fs+=$event" v-bind:key="'b'+post.id"></blog2>
+				<!--事件处理函数是一个方法-->
+				<blog2 v-bind:post="posts[0]" v-on:big-text="fnText" :key="'ccc'"></blog2>
 			</div>
+			
+			<!--在组件上使用 v-model
+				<input v-model="searchText">
+				等价于：
+				<input v-bind:value="searchText" v-on:input="searchText=$event.target.value">
+			-->
+			<ipt :value="sarchText" v-on:input="sarchText=$event"></ipt>
 		</div>
 	</body>
 	<script src="vue.js"></script>
@@ -51,9 +60,16 @@
 			template: '<div class="blog-post">\
 				<h5>{{post.title}}</h5>\
 				<div v-html="post.con"></div>\
-				<button @click="$emit(\'big-text\',1)">big</button>\
+				<button @click="$emit(\'big-text\',2)">big</button>\
 			</div>'
 		});
+		
+		Vue.component('ipt',{
+			prop:['searchText'],
+			template:'<div>\
+				{{sarchText}}<input v-model="sarchText" >\
+			</div>'
+		})
 		
 		var vm = new Vue({
 			el: '#app',
@@ -63,6 +79,7 @@
 					{title:'22',id:1,con:'<span style="color:#ff9900">text...<span>'},
 					{title:'33',id:2,con:'<span style="color:#ff9900">text2...<span>'},
 				],
+				sarchText: '',
 			},
 			/*侦听属性*/
 			watch: {
@@ -77,6 +94,9 @@
 			
 			/*方法*/
 			methods:{
+				fnText: function(_text){
+					this.fs += _text;
+				}
 			},
 		});
 	
